@@ -26,3 +26,7 @@ sup {
   font-size: 0.55em;
   vertical-align: super;
 }
+/* Prevent iOS double-tap zoom */
+* {
+  touch-action: manipulation;
+}
