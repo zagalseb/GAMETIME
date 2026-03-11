@@ -156,5 +156,14 @@ const PlayLogic = {
     document.querySelectorAll('.result-btn').forEach(b => b.classList.remove('selected'));
 
     renderCounterValue('yards');
+
+    // Reset defense selections
+    State.selectedFront    = '';
+    State.selectedBlitz    = 'none';
+    State.selectedCoverage = '';
+    renderDefenseLists();
+
+    // Reset motion chip
+    MotionChip.reset();
   },
 };

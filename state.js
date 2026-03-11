@@ -4,13 +4,16 @@
 
 const State = {
   // Scores
-  scoreHome: 30,
+  scoreHome: 0,
   scoreAway: 0,
+  teamHome: 'HOME',
+  teamAway: 'AWAY',
+  quarter:   1,   // 1 | 2 | 3 | 4 | 'OT'
 
   // Down & Distance
-  down: 3,          // 1-4
-  toFirst: 8,       // yards to first
-  oppYardLine: 40,  // opponent yard line
+  down: 1,          // 1-4
+  toFirst: 10,       // yards to first
+  oppYardLine: 75,  // opponent yard line
   oppRight: 21,     // right counter (opponent score mirror or custom)
 
   // Direction
@@ -34,6 +37,16 @@ const State = {
 
   // Play history
   history: [],
+
+  // Defense selections
+  selectedFront:    '',
+  selectedBlitz:    'none',
+  selectedCoverage: '',
+
+  // Drive tracking
+  currentDrive:      1,
+  currentDriveStart: 0,
+  drives:            [],
 
   // ── Derived ──────────────────────────────
   getSituationText() {

@@ -2,39 +2,7 @@
 // history.js — Play history log
 // ══════════════════════════════════════════
 
-function renderHistory() {
-  const list = document.getElementById('history-list');
-  if (!list) return;
-
-  if (State.history.length === 0) {
-    list.innerHTML = '<div class="history-empty">No plays recorded yet</div>';
-    return;
-  }
-
-  list.innerHTML = State.history.map((play, i) => `
-    <div class="history-item">
-      <div class="history-item-top">
-        <span class="history-item-num">${i + 1}</span>
-        <span class="play-badge ${play.type}" style="flex-shrink:0">${play.type.toUpperCase()}</span>
-        <span class="history-item-play">${play.playName}</span>
-      </div>
-      <div class="history-item-meta">
-        <span class="history-meta-tag">${play.down}&amp;${play.toFirst}</span>
-        <span class="history-meta-tag">${play.yardDisplay > 0 ? 'OPP' : 'OWN'} ${Math.abs(play.yardDisplay)}</span>
-        ${play.strength ? `<span class="history-meta-tag">${play.strength}</span>` : ''}
-        ${play.motion && play.motion !== 'none' ? `<span class="history-meta-tag">${play.motionName}</span>` : ''}
-        ${play.result ? `<span class="history-meta-tag result-${play.result.toLowerCase().replace(' ', '-')}">${play.result}</span>` : ''}
-        ${play.yardsGained !== undefined ? `<span class="history-meta-tag">${play.yardsGained > 0 ? '+' : ''}${play.yardsGained} yds</span>` : ''}
-        ${play.playerNumber ? `<span class="history-meta-tag">#${play.playerNumber}</span>` : ''}
-        ${play.penalty ? `<span class="history-meta-tag penalty">⚑ ${play.penalty.team} ${play.penalty.yards}yds</span>` : ''}
-        ${play.notes ? `<span class="history-meta-tag notes">${play.notes}</span>` : ''}
-      </div>
-    </div>
-  `).reverse().join(''); // newest first
-
-  // Auto-scroll to top (newest)
-  list.scrollTop = 0;
-}
+// renderHistory() is now provided by drives.js
 
 function logPlay(extra = {}) {
   const plays = getPlaysForFormation(State.selectedFormation);
@@ -59,6 +27,9 @@ function logPlay(extra = {}) {
     yardDisplay:  formatYardLine(State.oppYardLine),
     scoreHome:    State.scoreHome,
     scoreAway:    State.scoreAway,
+    quarter:      State.quarter,
+    teamHome: State.teamHome,
+    teamAway: State.teamAway,
     // Extended fields from PlayLogic
     yardsGained:  State.yardsGained,
     result:       State.selectedResult,
@@ -67,6 +38,10 @@ function logPlay(extra = {}) {
                     ? { team: extra.penaltyTeam, yards: extra.penaltyYards }
                     : null,
     notes:        extra.notes || '',
+    // Defense
+    selectedFront:    State.selectedFront,
+    selectedBlitz:    State.selectedBlitz,
+    selectedCoverage: State.selectedCoverage,
   };
 
   State.history.push(entry);

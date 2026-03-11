@@ -5,8 +5,16 @@
 // ── Render everything from State ──────────
 function renderAll() {
   // Scores
-  document.getElementById('score-home').textContent = State.scoreHome;
-  document.getElementById('score-away').textContent = State.scoreAway;
+  const homeEl = document.getElementById('score-home');
+  const awayEl = document.getElementById('score-away');
+  if (document.activeElement !== homeEl) homeEl.value = State.scoreHome;
+  if (document.activeElement !== awayEl) awayEl.value = State.scoreAway;
+
+  // Quarter buttons
+  document.querySelectorAll('.quarter-btn').forEach(btn => {
+    const q = isNaN(btn.dataset.q) ? btn.dataset.q : parseInt(btn.dataset.q);
+    btn.classList.toggle('active', q === State.quarter);
+  });
 
   // Situation chip
   updateSituationChip();
@@ -26,7 +34,7 @@ function renderAll() {
   // Selectors
   renderFormationList();
   renderPlayList();
-  renderMotionList();
+  MotionChip.render();
 
   // Play bar
   const badge = document.getElementById('play-badge');
@@ -37,6 +45,9 @@ function renderAll() {
 
   // Field
   updateBallMarker();
+
+  // Defense lists
+  renderDefenseLists();
 }
 
 // ── Wire up events ────────────────────────
@@ -93,23 +104,59 @@ function initEvents() {
     });
   });
 
+  // Score inputs — sync to State on change
+  document.getElementById('score-home').addEventListener('input', function () {
+    State.scoreHome = parseInt(this.value, 10) || 0;
+  });
+  document.getElementById('score-away').addEventListener('input', function () {
+    State.scoreAway = parseInt(this.value, 10) || 0;
+  });
+
+  const homeNameEl = document.getElementById('team-home-name');
+  const awayNameEl = document.getElementById('team-away-name');
+  if (document.activeElement !== homeNameEl) homeNameEl.value = State.teamHome;
+  if (document.activeElement !== awayNameEl) awayNameEl.value = State.teamAway;
+
+  document.getElementById('team-home-name').addEventListener('input', function () {
+    State.teamHome = this.value || 'HOME';
+  });
+  document.getElementById('team-away-name').addEventListener('input', function () {
+    State.teamAway = this.value || 'AWAY';
+  });
+
+  // Quarter selector
+  document.querySelectorAll('.quarter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      State.quarter = isNaN(btn.dataset.q) ? btn.dataset.q : parseInt(btn.dataset.q);
+      document.querySelectorAll('.quarter-btn').forEach(b =>
+        b.classList.toggle('active', b === btn)
+      );
+    });
+  });
+
+  // Menu → Playbook Editor
+  document.getElementById('btn-menu').addEventListener('click', () => {
+    PlaybookEditor.open();
+  });
+
   // End Drive
   document.getElementById('btn-end-drive').addEventListener('click', () => {
-    if (State.history.length > 0) {
-      const last = State.history[State.history.length - 1];
-      // Reset down & distance after drive ends
-      State.down = 1;
-      State.toFirst = 10;
-      renderAll();
-    }
+    endDrive();
+    State.down    = 1;
+    State.toFirst = 10;
+    renderAll();
   });
+
 }
 
 // ── Boot ──────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  PlaybookEditor.init();   // first — loads localStorage before everything else
+  PlayEditor.init();
   initField();
   initCounters();
   initExport();
+  MotionChip.init();
   initEvents();
   renderAll();
   renderHistory();

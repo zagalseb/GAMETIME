@@ -29,6 +29,7 @@ function renderFormationList() {
       State.selectedPlay = plays[0]?.id || '';
       State.selectedMotion = 'none';
       renderAll();
+      MotionChip.render();
     });
 
     list.appendChild(item);
@@ -61,27 +62,11 @@ function renderPlayList() {
       // Sync play type to run/pass toggle
       State.playType = p.type;
       renderAll();
+      MotionChip.render();
     });
 
     list.appendChild(item);
   });
 }
 
-function renderMotionList() {
-  const list = document.getElementById('motion-list');
-  list.innerHTML = '';
-
-  PLAYBOOK.motions.forEach(m => {
-    const item = document.createElement('div');
-    item.className = 'selector-item' + (m.id === State.selectedMotion ? ' selected' : '');
-    item.dataset.id = m.id;
-    item.textContent = m.name;
-
-    item.addEventListener('click', () => {
-      State.selectedMotion = m.id;
-      renderAll();
-    });
-
-    list.appendChild(item);
-  });
-}
+// renderMotionList() removed — replaced by MotionChip in motionChip.js
