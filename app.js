@@ -48,6 +48,12 @@ function renderAll() {
 
   // Defense lists
   renderDefenseLists();
+
+  // Drive chip
+  renderDriveChip();
+
+  // Auto-save
+  GameManager.autosave();
 }
 
 // ── Wire up events ────────────────────────
@@ -134,8 +140,13 @@ function initEvents() {
     });
   });
 
-  // Menu → Playbook Editor
+  // Menu → Game selection screen
   document.getElementById('btn-menu').addEventListener('click', () => {
+    GameManager.showScreen();
+  });
+
+  // Playbook Editor button
+  document.getElementById('btn-playbook-editor').addEventListener('click', () => {
     PlaybookEditor.open();
   });
 
@@ -160,4 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initEvents();
   renderAll();
   renderHistory();
+  renderDriveChip();
+  GameManager.init(); // last — shows game selection screen
 });

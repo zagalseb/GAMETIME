@@ -45,5 +45,6 @@ function logPlay(extra = {}) {
   };
 
   State.history.push(entry);
+  GameManager.autosave();
   renderHistory();
 }

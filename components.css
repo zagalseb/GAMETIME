@@ -10,7 +10,7 @@
 }
 .logo-icon {
   width: 28px; height: 28px;
-  background: var(--accent-orange);
+  background: #004992;
   border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
   font-size: 14px; font-weight: 900;
@@ -1096,6 +1096,9 @@
   flex-shrink: 0;
   margin-left: auto;
 }
+.col-header .motion-chip-wrap {
+  margin-left: 0;
+}
 
 .motion-chip {
   display: flex;
@@ -1716,3 +1719,222 @@
 .tl-item:active {
   background: var(--bg-item) !important;
 }
+
+/* ── Drive chip in play bar ── */
+.drive-chip {
+  flex-shrink: 0;
+  height: 26px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--r-full);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.drive-chip.drive-chip-positive {
+  color: #69f0ae;
+  background: rgba(105, 240, 174, 0.08);
+  border-color: rgba(105, 240, 174, 0.25);
+}
+.drive-chip.drive-chip-negative {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.08);
+  border-color: rgba(255, 107, 107, 0.25);
+}
+.drive-chip.drive-chip-neutral {
+  color: var(--text-muted);
+}
+
+/* ══════════════════════════════════════════
+   GAME SELECTION SCREEN
+══════════════════════════════════════════ */
+
+#game-select-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#game-select-panel {
+  width: 480px;
+  max-width: 95vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.game-select-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 24px;
+}
+
+.game-select-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+/* Game list */
+.game-list {
+  overflow-y: auto;
+  max-height: 60vh;
+  -webkit-overflow-scrolling: touch;
+}
+.game-list::-webkit-scrollbar { width: 3px; }
+.game-list::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 99px; }
+
+.game-list-empty {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 40px 20px;
+}
+
+/* Game card */
+.game-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.game-card:active { background: var(--bg-item); }
+.game-card.current {
+  border-color: var(--accent-orange);
+  background: rgba(255, 107, 0, 0.05);
+}
+
+.game-card-main { flex: 1; min-width: 0; }
+
+.game-card-teams {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+.game-card-home,
+.game-card-away {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.game-card-score {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.game-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.game-card-date {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.game-card-plays {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.game-card-current-badge {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--accent-orange);
+  background: var(--accent-orange-muted);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.game-card-actions { flex-shrink: 0; }
+.game-card-delete {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  color: var(--text-muted);
+  background: transparent;
+  transition: color 0.1s, background 0.1s;
+}
+.game-card-delete:active {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+}
+
+
+/* ── Play list — 2 column layout ── */
+.play-list-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+}
+.play-col-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-align: center;
+  padding: 5px 0;
+}
+.play-col-label.run  { color: var(--run-color); }
+.play-col-label.pass { color: var(--pass-color); }
+
+.play-list-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--border);
+}
+
+.play-cell {
+  padding: 7px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  min-height: 32px;
+}
+.play-cell.play-item {
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.play-cell.play-item:active { background: var(--bg-item); }
+.play-cell.play-item.selected {
+  background: var(--bg-selected);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+.run-cell  { border-right: 1px solid var(--border); }
+.run-cell.selected  { box-shadow: inset 2px 0 0 var(--run-color); }
+.pass-cell.selected { box-shadow: inset 2px 0 0 var(--pass-color); }

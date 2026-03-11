@@ -220,6 +220,7 @@ const PlayEditor = (() => {
               <button class="pe-result-btn" data-result="1st Down">1st Down</button>
               <button class="pe-result-btn" data-result="TD">🏈 TD</button>
               <button class="pe-result-btn" data-result="Incomplete">Incomplete</button>
+              <button class="pe-result-btn" data-result="Complete">Complete</button>
               <button class="pe-result-btn" data-result="Turnover">Turnover</button>
               <button class="pe-result-btn" data-result="Sack">Sack</button>
               <button class="pe-result-btn" data-result="Scramble">Scramble</button>

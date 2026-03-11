@@ -42,31 +42,59 @@ function renderPlayList() {
 
   const plays = getPlaysForFormation(State.selectedFormation);
 
-  plays.forEach(p => {
-    const item = document.createElement('div');
-    item.className = 'selector-item' + (p.id === State.selectedPlay ? ' selected' : '');
-    item.dataset.id = p.id;
+  // Split into run and pass
+  const runs  = plays.filter(p => p.type === 'run');
+  const passes = plays.filter(p => p.type === 'pass');
+  const maxLen = Math.max(runs.length, passes.length);
 
-    const badge = document.createElement('span');
-    badge.className = `play-badge ${p.type}`;
-    badge.textContent = p.type.toUpperCase();
+  // Header row
+  const header = document.createElement('div');
+  header.className = 'play-list-header';
+  header.innerHTML = `
+    <span class="play-col-label run">RUN</span>
+    <span class="play-col-label pass">PASS</span>
+  `;
+  list.appendChild(header);
 
-    const name = document.createElement('span');
-    name.textContent = p.name;
+  // Rows — one run + one pass per row
+  for (let i = 0; i < maxLen; i++) {
+    const row = document.createElement('div');
+    row.className = 'play-list-row';
 
-    item.appendChild(badge);
-    item.appendChild(name);
+    // Run cell
+    const runCell = document.createElement('div');
+    runCell.className = 'play-cell run-cell';
+    if (runs[i]) {
+      runCell.classList.add('play-item');
+      if (runs[i].id === State.selectedPlay) runCell.classList.add('selected');
+      runCell.textContent = runs[i].name;
+      runCell.addEventListener('click', () => {
+        State.selectedPlay = runs[i].id;
+        State.playType = 'run';
+        renderAll();
+        MotionChip.render();
+      });
+    }
 
-    item.addEventListener('click', () => {
-      State.selectedPlay = p.id;
-      // Sync play type to run/pass toggle
-      State.playType = p.type;
-      renderAll();
-      MotionChip.render();
-    });
+    // Pass cell
+    const passCell = document.createElement('div');
+    passCell.className = 'play-cell pass-cell';
+    if (passes[i]) {
+      passCell.classList.add('play-item');
+      if (passes[i].id === State.selectedPlay) passCell.classList.add('selected');
+      passCell.textContent = passes[i].name;
+      passCell.addEventListener('click', () => {
+        State.selectedPlay = passes[i].id;
+        State.playType = 'pass';
+        renderAll();
+        MotionChip.render();
+      });
+    }
 
-    list.appendChild(item);
-  });
+    row.appendChild(runCell);
+    row.appendChild(passCell);
+    list.appendChild(row);
+  }
 }
 
 // renderMotionList() removed — replaced by MotionChip in motionChip.js

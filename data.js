@@ -1,85 +1,159 @@
 // ══════════════════════════════════════════
-// data.js — Mock data for PlaySync
-// Replace with real data / API calls later
+// data.js — PlaySync Playbook
 // ══════════════════════════════════════════
 
 const PLAYBOOK = {
   formations: [
-    // A
-    { id: 'ace-slot-left',    name: 'Ace Slot Left',          group: 'A' },
-    // E
-    { id: 'empty-bunch-left', name: 'Empty Bunch Left',       group: 'E' },
-    { id: 'empty-flex',       name: 'Empty Flex',             group: 'E' },
-    // G
-    { id: 'gun-bunch-strong', name: 'Gun Bunch Strong Nasty Left', group: 'G' },
-    { id: 'gun-deuce-close',  name: 'Gun Deuce Close Left',   group: 'G' },
-    { id: 'gun-flex-y-off',   name: 'Gun Flex Y Off Close Left', group: 'G' },
-    { id: 'gun-wing-stack',   name: 'Gun Wing Stack Weak Left', group: 'G' },
-    { id: 'gun-tight-slots',  name: 'Gun Tight Slots',        group: 'G' },
-    // I
-    { id: 'i-form-pro',       name: 'I-Form Pro',             group: 'I' },
-    { id: 'i-form-twins',     name: 'I-Form Twins',           group: 'I' },
-    // S
-    { id: 'singleback-ace',   name: 'Singleback Ace',         group: 'S' },
-    { id: 'singleback-bunch', name: 'Singleback Bunch',       group: 'S' },
+    { id: 'max',         name: 'Max',         group: 'M' },
+    { id: 'trips',       name: 'Trips',       group: 'T' },
+    { id: 'split',       name: 'Split',       group: 'S' },
+    { id: 'empty',       name: 'Empty',       group: 'E' },
+    { id: 'pistol',      name: 'Pistol',      group: 'P' },
+    { id: 'undercenter', name: 'Undercenter', group: 'U' },
   ],
 
-  // plays keyed by formation id
   plays: {
-    'gun-flex-y-off': [
-      { id: 'counter-y',      name: 'Counter Y',        type: 'run' },
-      { id: 'curl-ohio',      name: 'Curl Ohio',         type: 'pass' },
-      { id: 'escape',         name: 'Escape',            type: 'pass' },
-      { id: 'flood',          name: 'Flood',             type: 'pass' },
-      { id: 'hb-circle',      name: 'HB Circle',         type: 'pass' },
-      { id: 'hb-slip-screen', name: 'HB Slip Screen',    type: 'pass' },
-      { id: 'pa-deep-cross',  name: 'PA Deep Cross',     type: 'pass' },
-      { id: 'te-wheel',       name: 'TE Wheel',          type: 'pass' },
-      { id: 'verticals',      name: 'Verticals',         type: 'pass' },
+    // ── MAX — heavy run formation ──────────
+    'max': [
+    // ── Run game ──
+    { id: 'max-power',        name: 'Power',            type: 'run'  },
+    { id: 'max-counter',      name: 'Counter',          type: 'run'  },
+    { id: 'max-inside-zone',  name: 'Inside Zone',      type: 'run'  },
+    { id: 'max-outside-zone', name: 'Outside Zone',     type: 'run'  },
+    { id: 'max-iso',          name: 'ISO',              type: 'run'  },
+    { id: 'max-sweep',        name: 'Sweep',            type: 'run'  },
+    { id: 'max-trap',         name: 'Trap',             type: 'run'  },
+    { id: 'max-draw',         name: 'Draw',             type: 'run'  },
+    { id: 'max-qb-sneak',     name: 'QB Draw',          type: 'run'  },
+    // ── RPO ──
+    { id: 'max-rpo-slant',    name: 'RPO Slant',        type: 'run'  },
+    { id: 'max-rpo-bubble',   name: 'RPO Bubble',       type: 'run'  },
+    { id: 'max-rpo-screen',   name: 'RPO Screen',       type: 'run'  },
+    { id: 'max-rpo-peek',     name: 'RPO Peek',         type: 'run'  },
+    // ── Play Action ──
+    { id: 'max-pa-post',      name: 'PA Post',          type: 'pass' },
+    { id: 'max-pa-corner',    name: 'PA Corner',        type: 'pass' },
+    { id: 'max-pa-cross',     name: 'PA Cross',         type: 'pass' },
+    { id: 'max-pa-seam',      name: 'PA Seam',          type: 'pass' },
+    { id: 'max-pa-boot',      name: 'PA Bootleg',       type: 'pass' },
+    { id: 'max-pa-wheel',     name: 'PA Wheel',         type: 'pass' },
+    // ── Pass profundo ──
+    { id: 'max-four-verts',   name: 'Four Verticals',   type: 'pass' },
+    { id: 'max-post',         name: 'Post',             type: 'pass' },
+    { id: 'max-corner',       name: 'Corner',           type: 'pass' },
+    { id: 'max-go',           name: 'Go Route',         type: 'pass' },
+    { id: 'max-post-corner',  name: 'Post Corner',      type: 'pass' },
+    // ── Pass medio ──
+    { id: 'max-mesh',         name: 'Mesh',             type: 'pass' },
+    { id: 'max-cross',        name: 'Cross',            type: 'pass' },
+    { id: 'max-dig',          name: 'Dig',              type: 'pass' },
+    { id: 'max-drive',        name: 'Drive',            type: 'pass' },
+    { id: 'max-levels',       name: 'Levels',           type: 'pass' },
+    { id: 'max-shallow',      name: 'Shallow Cross',    type: 'pass' },
+    { id: 'max-pivot',        name: 'Pivot',            type: 'pass' },
+    // ── Pass corto ──
+    { id: 'max-slant',        name: 'Slant',            type: 'pass' },
+    { id: 'max-curl-flat',    name: 'Curl Flat',        type: 'pass' },
+    { id: 'max-smash',        name: 'Smash',            type: 'pass' },
+    { id: 'max-stick',        name: 'Stick',            type: 'pass' },
+    { id: 'max-spacing',      name: 'Spacing',          type: 'pass' },
+    { id: 'max-snag',         name: 'Snag',             type: 'pass' },
+    { id: 'max-hitch',        name: 'Hitch',            type: 'pass' },
+    { id: 'max-out',          name: 'Out Route',        type: 'pass' },
+    { id: 'max-quick-slant',  name: 'Quick Slant',      type: 'pass' },
+    // ── Screens ──
+    { id: 'max-wr-screen',    name: 'WR Screen',        type: 'pass' },
+    { id: 'max-hb-screen',    name: 'HB Screen',        type: 'pass' },
+    { id: 'max-slip-screen',  name: 'Slip Screen',      type: 'pass' },
+    { id: 'max-tunnel',       name: 'Tunnel Screen',    type: 'pass' },
+  ],
+
+    // ── TRIPS — 3 receivers one side ──────
+    'trips': [
+      { id: 'trips-mesh',      name: 'Mesh',            type: 'pass' },
+      { id: 'trips-drive',     name: 'Drive',           type: 'pass' },
+      { id: 'trips-stick',     name: 'Stick',           type: 'pass' },
+      { id: 'trips-flood',     name: 'Flood',           type: 'pass' },
+      { id: 'trips-verticals', name: 'Verticals',       type: 'pass' },
+      { id: 'trips-corner',    name: 'Corner',          type: 'pass' },
+      { id: 'trips-post',      name: 'Post',            type: 'pass' },
+      { id: 'trips-screen',    name: 'WR Screen',       type: 'pass' },
+      { id: 'trips-bubble',    name: 'Bubble Screen',   type: 'pass' },
+      { id: 'trips-zone',      name: 'Outside Zone',    type: 'run'  },
+      { id: 'trips-rpo',       name: 'RPO Peek',        type: 'run'  },
     ],
-    'gun-bunch-strong': [
-      { id: 'drive',          name: 'Drive',             type: 'pass' },
-      { id: 'mesh',           name: 'Mesh',              type: 'pass' },
-      { id: 'power-o',        name: 'Power O',           type: 'run' },
-      { id: 'rpo-peek',       name: 'RPO Peek',          type: 'run' },
-      { id: 'screen-left',    name: 'Screen Left',       type: 'pass' },
+
+    // ── SPLIT — 2x2 balanced ──────────────
+    'split': [
+      { id: 'split-four-verts', name: 'Four Verticals',  type: 'pass' },
+      { id: 'split-mesh',       name: 'Mesh',            type: 'pass' },
+      { id: 'split-cross',      name: 'Cross',           type: 'pass' },
+      { id: 'split-dig',        name: 'Dig',             type: 'pass' },
+      { id: 'split-curl-flat',  name: 'Curl Flat',       type: 'pass' },
+      { id: 'split-smash',      name: 'Smash',           type: 'pass' },
+      { id: 'split-shallow',    name: 'Shallow Cross',   type: 'pass' },
+      { id: 'split-slant',      name: 'Slant',           type: 'pass' },
+      { id: 'split-zone',       name: 'Inside Zone',     type: 'run'  },
+      { id: 'split-power',      name: 'Power',           type: 'run'  },
+      { id: 'split-rpo-slant',  name: 'RPO Slant',       type: 'run'  },
     ],
-    'i-form-pro': [
-      { id: 'hb-dive',        name: 'HB Dive',           type: 'run' },
-      { id: 'off-tackle',     name: 'Off Tackle',        type: 'run' },
-      { id: 'power',          name: 'Power',             type: 'run' },
-      { id: 'pa-corner',      name: 'PA Corner',         type: 'pass' },
-      { id: 'iso',            name: 'ISO',               type: 'run' },
+
+    // ── EMPTY — 5 receivers ───────────────
+    'empty': [
+      { id: 'empty-four-verts', name: 'Four Verticals',  type: 'pass' },
+      { id: 'empty-mesh',       name: 'Mesh',            type: 'pass' },
+      { id: 'empty-shallow',    name: 'Shallow Cross',   type: 'pass' },
+      { id: 'empty-stick',      name: 'Stick',           type: 'pass' },
+      { id: 'empty-spacing',    name: 'Spacing',         type: 'pass' },
+      { id: 'empty-snag',       name: 'Snag',            type: 'pass' },
+      { id: 'empty-levels',     name: 'Levels',          type: 'pass' },
+      { id: 'empty-screen',     name: 'WR Screen',       type: 'pass' },
+      { id: 'empty-qb-draw',    name: 'QB Draw',         type: 'run'  },
     ],
-    'empty-bunch-left': [
-      { id: 'four-verticals', name: 'Four Verticals',    type: 'pass' },
-      { id: 'slants',         name: 'Slants',            type: 'pass' },
-      { id: 'shallow-cross',  name: 'Shallow Cross',     type: 'pass' },
-      { id: 'hail-mary',      name: 'Hail Mary',         type: 'pass' },
+
+    // ── PISTOL — hybrid run/pass ───────────
+    'pistol': [
+      { id: 'pistol-power',     name: 'Power',           type: 'run'  },
+      { id: 'pistol-counter',   name: 'Counter',         type: 'run'  },
+      { id: 'pistol-zone',      name: 'Inside Zone',     type: 'run'  },
+      { id: 'pistol-sweep',     name: 'Sweep',           type: 'run'  },
+      { id: 'pistol-rpo-slant', name: 'RPO Slant',       type: 'run'  },
+      { id: 'pistol-rpo-screen',name: 'RPO Screen',      type: 'run'  },
+      { id: 'pistol-pa-cross',  name: 'PA Cross',        type: 'pass' },
+      { id: 'pistol-pa-post',   name: 'PA Post',         type: 'pass' },
+      { id: 'pistol-mesh',      name: 'Mesh',            type: 'pass' },
+      { id: 'pistol-verticals', name: 'Verticals',       type: 'pass' },
     ],
-    'default': [
-      { id: 'hb-dive',        name: 'HB Dive',           type: 'run' },
-      { id: 'sweep',          name: 'Sweep',             type: 'run' },
-      { id: 'out-route',      name: 'Out Route',         type: 'pass' },
-      { id: 'curl',           name: 'Curl',              type: 'pass' },
-      { id: 'slant',          name: 'Slant',             type: 'pass' },
+
+    // ── UNDERCENTER — traditional ──────────
+    'undercenter': [
+      { id: 'uc-power',         name: 'Power',           type: 'run'  },
+      { id: 'uc-counter',       name: 'Counter',         type: 'run'  },
+      { id: 'uc-iso',           name: 'ISO',             type: 'run'  },
+      { id: 'uc-outside-zone',  name: 'Outside Zone',    type: 'run'  },
+      { id: 'uc-sweep',         name: 'Sweep',           type: 'run'  },
+      { id: 'uc-fb-dive',       name: 'FB Dive',         type: 'run'  },
+      { id: 'uc-pa-boot',       name: 'PA Bootleg',      type: 'pass' },
+      { id: 'uc-pa-cross',      name: 'PA Cross',        type: 'pass' },
+      { id: 'uc-pa-corner',     name: 'PA Corner',       type: 'pass' },
+      { id: 'uc-slant',         name: 'Slant',           type: 'pass' },
     ],
   },
 
   motions: [
-    { id: 'none',             name: 'No Motion' },
-    { id: 'jet-sweep',        name: 'Jet Sweep' },
-    { id: 'orbit',            name: 'Orbit' },
-    { id: 'fly-motion',       name: 'Fly Motion' },
-    { id: 'hb-motion-left',   name: 'HB Motion Left' },
-    { id: 'hb-motion-right',  name: 'HB Motion Right' },
-    { id: 'slot-motion',      name: 'Slot Motion' },
-    { id: 'bunch-motion',     name: 'Bunch Motion' },
-    { id: 'shift-tight',      name: 'Shift Tight' },
+    { id: 'none',            name: 'No Motion'       },
+    { id: 'jet',             name: 'Jet'             },
+    { id: 'orbit',           name: 'Orbit'           },
+    { id: 'fly',             name: 'Fly'             },
+    { id: 'hb-left',         name: 'HB Left'         },
+    { id: 'hb-right',        name: 'HB Right'        },
+    { id: 'slot-motion',     name: 'Slot Motion'     },
+    { id: 'shift-trips',     name: 'Shift Trips'     },
+    { id: 'shift-empty',     name: 'Shift Empty'     },
   ],
 };
 
 // Helper: get plays for a formation (fallback to default)
 function getPlaysForFormation(formationId) {
-  return PLAYBOOK.plays[formationId] || PLAYBOOK.plays['default'];
+  return PLAYBOOK.plays[formationId] || PLAYBOOK.plays['split'];
 }

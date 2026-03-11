@@ -144,4 +144,21 @@ function endDrive() {
   State.currentDrive      += 1;
   State.currentDriveStart  = State.history.length;
   renderHistory();
+  renderDriveChip();
+}
+
+function renderDriveChip() {
+  const chip = document.getElementById('drive-chip');
+  if (!chip) return;
+
+  const currentPlays = State.history.slice(State.currentDriveStart);
+  const totalYards   = currentPlays.reduce((s, p) => s + (p.yardsGained || 0), 0);
+  const playsCount   = currentPlays.length;
+  const yardsStr     = totalYards > 0 ? `+${totalYards}` : `${totalYards}`;
+
+  chip.textContent = `Drive ${State.currentDrive} · ${playsCount} play${playsCount !== 1 ? 's' : ''} · ${yardsStr} yds`;
+
+  chip.classList.toggle('drive-chip-positive', totalYards > 0);
+  chip.classList.toggle('drive-chip-negative', totalYards < 0);
+  chip.classList.toggle('drive-chip-neutral',  totalYards === 0);
 }
