@@ -303,8 +303,8 @@
 
     <!-- Col 9: History -->
     <div class="selector-col" id="col-history">
-      <div class="col-header">
-        History
+      <div class="col-header clickable-header" onclick="HistoryOverlay.open()">
+        History <span class="expand-icon">⤢</span>
         <button class="export-btn" id="btn-export">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
             <path d="M6.5 1v7M4 6l2.5 2.5L9 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -335,6 +335,7 @@
   <script src="playbookEditor.js"></script>
   <script src="playEditor.js"></script>
   <script src="gameManager.js"></script>
+  <script src="historyOverlay.js"></script>
   <script src="app.js"></script>
 
 </body>

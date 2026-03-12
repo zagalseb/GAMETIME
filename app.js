@@ -164,6 +164,7 @@ function initEvents() {
 document.addEventListener('DOMContentLoaded', () => {
   PlaybookEditor.init();   // first — loads localStorage before everything else
   PlayEditor.init();
+  HistoryOverlay.init();
   initField();
   initCounters();
   initExport();
