@@ -7,7 +7,7 @@
 function logPlay(extra = {}) {
   const plays = getPlaysForFormation(State.selectedFormation);
   const playObj = plays.find(p => p.id === State.selectedPlay);
-  const motionObj = PLAYBOOK.motions.find(m => m.id === State.selectedMotion);
+  const motionObj = getActivePlaybook().motions.find(m => m.id === State.selectedMotion);
 
   if (!playObj) return;
 
@@ -38,6 +38,8 @@ function logPlay(extra = {}) {
                     ? { team: extra.penaltyTeam, yards: extra.penaltyYards }
                     : null,
     notes:        extra.notes || '',
+    // Possession mode
+    mode:             State.possessionMode,
     // Defense
     selectedFront:    State.selectedFront,
     selectedBlitz:    State.selectedBlitz,

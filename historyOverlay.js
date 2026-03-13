@@ -58,9 +58,9 @@ const HistoryOverlay = (() => {
         : '—';
 
       const def = [
-        p.selectedFront    || '',
-        p.selectedBlitz && p.selectedBlitz !== 'none' ? p.selectedBlitz : '',
-        p.selectedCoverage || '',
+        _defName('fronts',    p.selectedFront,    p.mode),
+        _defName('blitzes',   p.selectedBlitz,    p.mode),
+        _defName('coverages', p.selectedCoverage, p.mode),
       ].filter(Boolean).join(' · ') || '—';
 
       const driveLabel = live

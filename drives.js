@@ -11,10 +11,15 @@ function renderHistory() {
     return;
   }
 
+  const filter = State.historyFilter || 'all';
+  const keep = play => filter === 'all' || play.mode === filter;
+
   let html = '';
 
   // ── Completed drives ──
   State.drives.forEach(drive => {
+    const entries = drive.playEntries.filter(keep);
+    if (!entries.length) return;
     html += `
       <div class="drive-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">
         <span class="drive-num">Drive ${drive.driveNum}</span>
@@ -23,13 +28,13 @@ function renderHistory() {
         <span class="drive-chevron">▾</span>
       </div>
       <div class="drive-plays collapsed">
-        ${drive.playEntries.map((p, i) => _playItemHTML(p, i + 1)).join('')}
+        ${entries.map((p, i) => _playItemHTML(p, i + 1)).join('')}
       </div>
     `;
   });
 
   // ── Current live drive ──
-  const currentPlays = State.history.slice(State.currentDriveStart);
+  const currentPlays = State.history.slice(State.currentDriveStart).filter(keep);
   if (currentPlays.length > 0) {
     const totalYards = currentPlays.reduce((s, p) => s + (p.yardsGained || 0), 0);
     html += `
@@ -45,8 +50,24 @@ function renderHistory() {
     `;
   }
 
+  if (!html) {
+    container.innerHTML = '<div class="history-empty">No plays for this filter</div>';
+    return;
+  }
+
   container.innerHTML = html;
   container.scrollTop = 0;
+}
+
+function _defName(listKey, id, mode) {
+  if (!id || id === 'none') return '';
+  // In 'own' possession (own offense), the defense faced is OPP DEF.
+  // In 'opp' possession (opp offense), the defense faced is OWN DEF.
+  const primary   = (mode === 'opp') ? getOwnDefPlaybook() : getOppDefPlaybook();
+  const secondary = (mode === 'opp') ? getOppDefPlaybook() : getOwnDefPlaybook();
+  const item = (primary[listKey] || []).find(x => x.id === id)
+            || (secondary[listKey] || []).find(x => x.id === id);
+  return item ? item.name : id;
 }
 
 function _playItemHTML(play, num) {
@@ -71,11 +92,11 @@ function _playItemHTML(play, num) {
     ? `<span class="tl-result ${resultClass}">${play.result}</span>`
     : '';
 
-  // Defense summary
+  // Defense summary — resolve IDs to display names
   const defParts = [
-    play.selectedFront || '',
-    play.selectedBlitz && play.selectedBlitz !== 'none' ? play.selectedBlitz : '',
-    play.selectedCoverage || '',
+    _defName('fronts',    play.selectedFront,    play.mode),
+    _defName('blitzes',   play.selectedBlitz,    play.mode),
+    _defName('coverages', play.selectedCoverage, play.mode),
   ].filter(Boolean);
   const defHTML = defParts.length
     ? `<span class="tl-def">${defParts.join(' · ')}</span>`

@@ -7,6 +7,8 @@ const GameManager = (() => {
   const GAMES_KEY      = 'playsync_games';
   const CURRENT_ID_KEY = 'playsync_current_game_id';
 
+  let _ready = false;
+
   // ── Storage helpers ───────────────────
   function _loadGames() {
     try {
@@ -47,6 +49,8 @@ const GameManager = (() => {
       currentDrive:      State.currentDrive,
       currentDriveStart: State.currentDriveStart,
       drives:            State.drives,
+      opponentPlays:     State.opponentPlays,
+      possessionMode:    State.possessionMode,
     };
   }
 
@@ -57,6 +61,7 @@ const GameManager = (() => {
 
   // ── Auto-save current game ────────────
   function autosave() {
+    if (!_ready) return;
     const id = _getCurrentId();
     if (!id) return;
 
@@ -75,7 +80,7 @@ const GameManager = (() => {
   }
 
   // ── Create new game ───────────────────
-  function createGame() {
+  function createGame(teamHome = 'HOME', teamAway = 'AWAY', week = '1') {
     const id = 'game_' + Date.now();
     const now = new Date();
     const dateStr = now.toLocaleDateString('es-MX', {
@@ -84,11 +89,12 @@ const GameManager = (() => {
 
     const game = {
       id,
-      teamHome:  'HOME',
-      teamAway:  'AWAY',
+      teamHome:  teamHome,
+      teamAway:  teamAway,
       scoreHome: 0,
       scoreAway: 0,
       date:      dateStr,
+      week:      week,
       plays:     0,
       state:     null,
     };
@@ -102,8 +108,8 @@ const GameManager = (() => {
     Object.assign(State, {
       scoreHome:         0,
       scoreAway:         0,
-      teamHome:          'HOME',
-      teamAway:          'AWAY',
+      teamHome:          teamHome,
+      teamAway:          teamAway,
       quarter:           1,
       down:              1,
       toFirst:           10,
@@ -111,8 +117,8 @@ const GameManager = (() => {
       flipped:           false,
       playType:          'pass',
       strength:          'L',
-      selectedFormation: 'gun-flex-y-off',
-      selectedPlay:      'te-wheel',
+      selectedFormation: 'max',
+      selectedPlay:      '',
       selectedMotion:    'none',
       yardsGained:       0,
       playerNumber:      0,
@@ -121,6 +127,9 @@ const GameManager = (() => {
       currentDrive:      1,
       currentDriveStart: 0,
       drives:            [],
+      opponentPlays:     [],
+      possessionMode:    'own',
+      historyFilter:     'all',
     });
 
     closeScreen();
@@ -195,7 +204,7 @@ const GameManager = (() => {
             <span class="game-card-away">${g.teamAway}</span>
           </div>
           <div class="game-card-meta">
-            <span class="game-card-date">${g.date}</span>
+            <span class="game-card-date">${g.week ? _weekLabel(g.week) : g.date}</span>
             <span class="game-card-plays">${g.plays} plays</span>
             ${g.id === currentId ? '<span class="game-card-current-badge">ACTIVE</span>' : ''}
           </div>
@@ -226,6 +235,8 @@ const GameManager = (() => {
   // ── Init — called on DOMContentLoaded ─
   function init() {
     _buildDOM();
+    _ready = true;
+    window.addEventListener('pagehide', autosave);
 
     const currentId = _getCurrentId();
     const games     = _loadGames();
@@ -269,7 +280,88 @@ const GameManager = (() => {
 
     document.body.appendChild(el);
 
-    document.getElementById('gs-btn-new').addEventListener('click', createGame);
+    document.getElementById('gs-btn-new').addEventListener('click', _showNewGameForm);
+  }
+
+  // ── Week label helper ─────────────────
+  const WEEK_OPTIONS = ['Preseason','1','2','3','4','5','6','7','8','9','10','QF','SF','Final'];
+
+  function _weekLabel(w) {
+    if (['QF','SF','Final','Preseason'].includes(w)) return w;
+    return `Semana ${w}`;
+  }
+
+  // ── New-game inline form ──────────────
+  function _showNewGameForm() {
+    if (document.getElementById('gs-new-game-form')) return;
+
+    const btnNew = document.getElementById('gs-btn-new');
+    btnNew.disabled = true;
+    btnNew.style.opacity = '0.4';
+
+    const form = document.createElement('div');
+    form.id = 'gs-new-game-form';
+    form.style.cssText = `
+      background: var(--bg-card, #1e293b);
+      border: 1px solid var(--border-light, #334155);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    `;
+    const weekOpts = WEEK_OPTIONS.map(w =>
+      `<option value="${w}">${_weekLabel(w)}</option>`
+    ).join('');
+
+    form.innerHTML = `
+      <div style="display:flex; gap:8px; align-items:center;">
+        <input id="gs-input-home" class="modal-text-input" type="text"
+               placeholder="Local" maxlength="10" autocomplete="off" style="flex:1;" />
+        <span style="color:var(--text-muted,#64748b); font-size:12px; font-weight:700;">vs</span>
+        <input id="gs-input-away" class="modal-text-input" type="text"
+               placeholder="Visitante" maxlength="10" autocomplete="off" style="flex:1;" />
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <label style="font-size:11px; font-weight:700; letter-spacing:.08em; color:var(--text-muted,#64748b); text-transform:uppercase; white-space:nowrap;">Semana</label>
+        <select id="gs-input-week" class="modal-text-input" style="flex:1;">
+          ${weekOpts}
+        </select>
+      </div>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button id="gs-btn-cancel-new" class="btn-secondary" style="height:34px; padding:0 12px;">✕</button>
+        <button id="gs-btn-confirm-new" class="btn-primary" style="height:34px; padding:0 14px;">Crear juego</button>
+      </div>
+    `;
+
+    const list = document.getElementById('game-list');
+    list.parentNode.insertBefore(form, list);
+
+    document.getElementById('gs-input-home').focus();
+
+    document.getElementById('gs-btn-confirm-new').addEventListener('click', _confirmNewGame);
+    document.getElementById('gs-btn-cancel-new').addEventListener('click', _hideNewGameForm);
+
+    form.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter')  { e.preventDefault(); _confirmNewGame(); }
+      if (e.key === 'Escape') { e.preventDefault(); _hideNewGameForm(); }
+    });
+  }
+
+  function _confirmNewGame() {
+    const homeRaw = (document.getElementById('gs-input-home').value || '').trim();
+    const awayRaw = (document.getElementById('gs-input-away').value || '').trim();
+    const week    = document.getElementById('gs-input-week').value || '1';
+    _hideNewGameForm();
+    createGame(homeRaw || 'HOME', awayRaw || 'AWAY', week);
+  }
+
+  function _hideNewGameForm() {
+    const form = document.getElementById('gs-new-game-form');
+    if (form) form.remove();
+    const btnNew = document.getElementById('gs-btn-new');
+    if (btnNew) { btnNew.disabled = false; btnNew.style.opacity = ''; }
   }
 
   return { init, autosave, showScreen, createGame };

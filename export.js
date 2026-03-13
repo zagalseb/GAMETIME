@@ -2,6 +2,15 @@
 // export.js — CSV export
 // ══════════════════════════════════════════
 
+function _csvDefName(listKey, id) {
+  if (!id || id === 'none') return '';
+  for (const pb of [getOwnDefPlaybook(), getOppDefPlaybook()]) {
+    const item = (pb[listKey] || []).find(x => x.id === id);
+    if (item) return item.name;
+  }
+  return id;
+}
+
 function exportCSV() {
   if (State.history.length === 0) {
     alert('No hay jugadas registradas para exportar.');
@@ -9,7 +18,7 @@ function exportCSV() {
   }
 
   const headers = [
-    '#', 'Timestamp', 'Drive',
+    '#', 'Timestamp', 'Drive', 'Poss',
     'Down', 'To First', 'Yard Line', 'Yard Display',
     `"${State.teamHome}"`, `"${State.teamAway}"`, 'Quarter',
     'Formation', 'Play', 'Type', 'Motion', 'Strength',
@@ -32,6 +41,7 @@ function exportCSV() {
       i + 1,
       p.timestamp,
       driveNum,
+      (p.mode || 'own').toUpperCase(),
       p.down,
       p.toFirst,
       p.oppYardLine,
@@ -49,9 +59,9 @@ function exportCSV() {
       p.playerNumber || '',
       p.penalty ? p.penalty.team  : '',
       p.penalty ? p.penalty.yards : '',
-      `"${p.selectedFront    || ''}"`,
-      `"${p.selectedBlitz && p.selectedBlitz !== 'none' ? p.selectedBlitz : ''}"`,
-      `"${p.selectedCoverage || ''}"`,
+      `"${_csvDefName('fronts',    p.selectedFront)}"`,
+      `"${_csvDefName('blitzes',   p.selectedBlitz)}"`,
+      `"${_csvDefName('coverages', p.selectedCoverage)}"`,
       `"${(p.notes || '').replace(/"/g, '""')}"`,
     ];
   });

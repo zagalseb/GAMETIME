@@ -52,10 +52,11 @@ const PlayEditor = (() => {
     document.getElementById('pe-player').value = play.playerNumber || '';
     document.getElementById('pe-notes').value  = play.notes || '';
 
-    // Defense
-    _selectDef('pe-front-list',    DEFENSE_DATA.fronts,    play.selectedFront);
-    _selectDef('pe-blitz-list',    DEFENSE_DATA.blitzes,   play.selectedBlitz);
-    _selectDef('pe-coverage-list', DEFENSE_DATA.coverages, play.selectedCoverage);
+    // Defense — use the playbook that was active when the play was recorded
+    const defPb = (play.mode === 'opp') ? getOwnDefPlaybook() : getOppDefPlaybook();
+    _selectDef('pe-front-list',    defPb.fronts,    play.selectedFront);
+    _selectDef('pe-blitz-list',    defPb.blitzes,   play.selectedBlitz);
+    _selectDef('pe-coverage-list', defPb.coverages, play.selectedCoverage);
   }
 
   function _populatePlays(formationId, selectedPlayId) {
@@ -221,6 +222,8 @@ const PlayEditor = (() => {
               <button class="pe-result-btn" data-result="TD">🏈 TD</button>
               <button class="pe-result-btn" data-result="Incomplete">Incomplete</button>
               <button class="pe-result-btn" data-result="Complete">Complete</button>
+              <button class="pe-result-btn" data-result="Gain">Gain</button>
+              <button class="pe-result-btn" data-result="TFL">TFL</button>
               <button class="pe-result-btn" data-result="Turnover">Turnover</button>
               <button class="pe-result-btn" data-result="Sack">Sack</button>
               <button class="pe-result-btn" data-result="Scramble">Scramble</button>

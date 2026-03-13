@@ -14,7 +14,7 @@ const MotionChip = {
     const dropdown = document.getElementById('motion-dropdown');
     if (!dropdown) return;
 
-    dropdown.innerHTML = PLAYBOOK.motions.map(m => `
+    dropdown.innerHTML = getActivePlaybook().motions.map(m => `
       <div class="motion-dropdown-item ${m.id === State.selectedMotion ? 'selected' : ''}"
            data-id="${m.id}">
         ${m.name}
@@ -61,7 +61,7 @@ const MotionChip = {
     const chip = document.getElementById('motion-chip');
     if (!chip) return;
 
-    const motion = PLAYBOOK.motions.find(m => m.id === State.selectedMotion);
+    const motion = getActivePlaybook().motions.find(m => m.id === State.selectedMotion);
     const hasMotion = State.selectedMotion && State.selectedMotion !== 'none';
 
     chip.className = 'motion-chip' + (hasMotion ? ' has-motion' : '');

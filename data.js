@@ -153,7 +153,137 @@ const PLAYBOOK = {
   ],
 };
 
-// Helper: get plays for a formation (fallback to default)
+const OPPONENT_PLAYBOOK = {
+  formations: [
+    { id: 'opp-shotgun',     name: 'Shotgun',      group: 'S' },
+    { id: 'opp-undercenter', name: 'Under Center',  group: 'U' },
+    { id: 'opp-pistol',      name: 'Pistol',        group: 'P' },
+    { id: 'opp-wildcat',     name: 'Wildcat',       group: 'W' },
+    { id: 'opp-empty',       name: 'Empty',         group: 'E' },
+  ],
+  plays: {
+    'opp-shotgun': [
+      { id: 'opp-sg-inside-zone',  name: 'Inside Zone',    type: 'run'  },
+      { id: 'opp-sg-outside-zone', name: 'Outside Zone',   type: 'run'  },
+      { id: 'opp-sg-power',        name: 'Power',          type: 'run'  },
+      { id: 'opp-sg-draw',         name: 'Draw',           type: 'run'  },
+      { id: 'opp-sg-rpo-slant',    name: 'RPO Slant',      type: 'run'  },
+      { id: 'opp-sg-rpo-bubble',   name: 'RPO Bubble',     type: 'run'  },
+      { id: 'opp-sg-four-verts',   name: 'Four Verticals', type: 'pass' },
+      { id: 'opp-sg-mesh',         name: 'Mesh',           type: 'pass' },
+      { id: 'opp-sg-shallow',      name: 'Shallow Cross',  type: 'pass' },
+      { id: 'opp-sg-curl-flat',    name: 'Curl Flat',      type: 'pass' },
+      { id: 'opp-sg-slant',        name: 'Slant',          type: 'pass' },
+      { id: 'opp-sg-screen',       name: 'WR Screen',      type: 'pass' },
+      { id: 'opp-sg-bubble',       name: 'Bubble Screen',  type: 'pass' },
+    ],
+    'opp-undercenter': [
+      { id: 'opp-uc-power',        name: 'Power',          type: 'run'  },
+      { id: 'opp-uc-counter',      name: 'Counter',        type: 'run'  },
+      { id: 'opp-uc-iso',          name: 'ISO',            type: 'run'  },
+      { id: 'opp-uc-outside-zone', name: 'Outside Zone',   type: 'run'  },
+      { id: 'opp-uc-sweep',        name: 'Sweep',          type: 'run'  },
+      { id: 'opp-uc-pa-boot',      name: 'PA Bootleg',     type: 'pass' },
+      { id: 'opp-uc-pa-cross',     name: 'PA Cross',       type: 'pass' },
+      { id: 'opp-uc-slant',        name: 'Slant',          type: 'pass' },
+    ],
+    'opp-pistol': [
+      { id: 'opp-ps-power',        name: 'Power',          type: 'run'  },
+      { id: 'opp-ps-counter',      name: 'Counter',        type: 'run'  },
+      { id: 'opp-ps-inside-zone',  name: 'Inside Zone',    type: 'run'  },
+      { id: 'opp-ps-rpo-slant',    name: 'RPO Slant',      type: 'run'  },
+      { id: 'opp-ps-pa-cross',     name: 'PA Cross',       type: 'pass' },
+      { id: 'opp-ps-pa-post',      name: 'PA Post',        type: 'pass' },
+      { id: 'opp-ps-mesh',         name: 'Mesh',           type: 'pass' },
+      { id: 'opp-ps-verticals',    name: 'Verticals',      type: 'pass' },
+    ],
+    'opp-wildcat': [
+      { id: 'opp-wc-inside-zone',  name: 'Inside Zone',    type: 'run'  },
+      { id: 'opp-wc-outside-zone', name: 'Outside Zone',   type: 'run'  },
+      { id: 'opp-wc-power',        name: 'Power',          type: 'run'  },
+      { id: 'opp-wc-sweep',        name: 'Sweep',          type: 'run'  },
+      { id: 'opp-wc-pass',         name: 'Wildcat Pass',   type: 'pass' },
+    ],
+    'opp-empty': [
+      { id: 'opp-em-qb-draw',      name: 'QB Draw',        type: 'run'  },
+      { id: 'opp-em-four-verts',   name: 'Four Verticals', type: 'pass' },
+      { id: 'opp-em-mesh',         name: 'Mesh',           type: 'pass' },
+      { id: 'opp-em-shallow',      name: 'Shallow Cross',  type: 'pass' },
+      { id: 'opp-em-spacing',      name: 'Spacing',        type: 'pass' },
+      { id: 'opp-em-screen',       name: 'WR Screen',      type: 'pass' },
+    ],
+  },
+  motions: [
+    { id: 'none',        name: 'No Motion' },
+    { id: 'jet',         name: 'Jet'       },
+    { id: 'orbit',       name: 'Orbit'     },
+    { id: 'fly',         name: 'Fly'       },
+    { id: 'slot-motion', name: 'Slot'      },
+  ],
+};
+
+const DEFENSE_DATA = {
+  fronts: [
+    { id: '4-3',     name: '4-3 Base'        },
+    { id: '3-4',     name: '3-4 Base'        },
+    { id: '5-2',     name: '5-2'             },
+    { id: '4-4',     name: '4-4'             },
+    { id: '3-3-5',   name: '3-3-5 Stack'     },
+    { id: 'nickel',  name: 'Nickel (3-2-6)'  },
+    { id: 'dime',    name: 'Dime (2-3-6)'    },
+    { id: '46-bear', name: '46 Bear'         },
+  ],
+  blitzes: [
+    { id: 'none',      name: 'No Blitz'    },
+    { id: 'a-gap',     name: 'A-Gap Blitz' },
+    { id: 'b-gap',     name: 'B-Gap Blitz' },
+    { id: 'edge',      name: 'Edge Blitz'  },
+    { id: 'db-blitz',  name: 'DB Blitz'    },
+    { id: 'zero',      name: 'Zero Blitz'  },
+    { id: 'fire-zone', name: 'Fire Zone'   },
+    { id: 'overload',  name: 'Overload'    },
+  ],
+  coverages: [
+    { id: 'cover-0',  name: 'Cover 0'           },
+    { id: 'cover-1',  name: 'Cover 1'           },
+    { id: 'cover-2',  name: 'Cover 2'           },
+    { id: 'cover-2m', name: 'Cover 2 Man'       },
+    { id: 'cover-3',  name: 'Cover 3'           },
+    { id: 'cover-4',  name: 'Cover 4 (Quarters)'},
+    { id: 'cover-6',  name: 'Cover 6'           },
+    { id: 'tampa-2',  name: 'Tampa 2'           },
+  ],
+};
+
+const OPP_DEFENSE_DATA = {
+  fronts:    DEFENSE_DATA.fronts.slice(),
+  blitzes:   DEFENSE_DATA.blitzes.slice(),
+  coverages: DEFENSE_DATA.coverages.slice(),
+};
+
+// Reads a playbook from localStorage, falls back to defaultData
+function getPlaybook(key, defaultData) {
+  try {
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : defaultData;
+  } catch { return defaultData; }
+}
+
+function getOwnOffPlaybook() { return getPlaybook('playsync_playbook_own_off', PLAYBOOK);        }
+function getOwnDefPlaybook() { return getPlaybook('playsync_playbook_own_def', DEFENSE_DATA);    }
+function getOppOffPlaybook() { return getPlaybook('playsync_playbook_opp_off', OPPONENT_PLAYBOOK);}
+function getOppDefPlaybook() { return getPlaybook('playsync_playbook_opp_def', OPP_DEFENSE_DATA); }
+
+// Returns the active offensive playbook based on possession mode
+function getActivePlaybook() {
+  return (typeof State !== 'undefined' && State.possessionMode === 'opp')
+    ? getOppOffPlaybook()
+    : getOwnOffPlaybook();
+}
+
+// Helper: get plays for a formation (fallback to first formation)
 function getPlaysForFormation(formationId) {
-  return PLAYBOOK.plays[formationId] || PLAYBOOK.plays['split'];
+  const pb = getActivePlaybook();
+  const fallback = pb.formations[0]?.id || null;
+  return pb.plays[formationId] || (fallback ? pb.plays[fallback] : []) || [];
 }

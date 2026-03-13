@@ -8,7 +8,7 @@ function renderFormationList() {
 
   let currentGroup = null;
 
-  PLAYBOOK.formations.forEach(f => {
+  getActivePlaybook().formations.forEach(f => {
     if (f.group !== currentGroup) {
       currentGroup = f.group;
       const groupEl = document.createElement('div');

@@ -26,8 +26,8 @@ const State = {
   strength: 'L',   // 'L' | 'R'
 
   // Selections
-  selectedFormation: 'gun-flex-y-off',
-  selectedPlay: 'te-wheel',
+  selectedFormation: 'max',
+  selectedPlay: '',
   selectedMotion: 'none',
 
   // Play result inputs
@@ -48,6 +48,13 @@ const State = {
   currentDriveStart: 0,
   drives:            [],
 
+  // Possession mode
+  possessionMode: 'own',  // 'own' | 'opp'
+  opponentPlays:  [],
+
+  // History filter
+  historyFilter: 'all',   // 'all' | 'own' | 'opp'
+
   // ── Derived ──────────────────────────────
   getSituationText() {
     const downs = ['', '1st', '2nd', '3rd', '4th'];
@@ -57,7 +64,7 @@ const State = {
   },
 
   getSelectedFormationName() {
-    const f = PLAYBOOK.formations.find(f => f.id === this.selectedFormation);
+    const f = getActivePlaybook().formations.find(f => f.id === this.selectedFormation);
     return f ? f.name : '';
   },
 
@@ -71,7 +78,7 @@ const State = {
     const formation = this.getSelectedFormationName();
     const play = this.getSelectedPlayName();
     const motion = this.selectedMotion !== 'none'
-      ? ` — ${PLAYBOOK.motions.find(m => m.id === this.selectedMotion)?.name || ''}`
+      ? ` — ${getActivePlaybook().motions.find(m => m.id === this.selectedMotion)?.name || ''}`
       : '';
     if (!formation && !play) return 'Select a play';
     if (!play) return formation;

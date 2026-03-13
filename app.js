@@ -10,6 +10,12 @@ function renderAll() {
   if (document.activeElement !== homeEl) homeEl.value = State.scoreHome;
   if (document.activeElement !== awayEl) awayEl.value = State.scoreAway;
 
+  // Team names
+  const homeNameEl = document.getElementById('team-home-name');
+  const awayNameEl = document.getElementById('team-away-name');
+  if (document.activeElement !== homeNameEl) homeNameEl.value = State.teamHome;
+  if (document.activeElement !== awayNameEl) awayNameEl.value = State.teamAway;
+
   // Quarter buttons
   document.querySelectorAll('.quarter-btn').forEach(btn => {
     const q = isNaN(btn.dataset.q) ? btn.dataset.q : parseInt(btn.dataset.q);
@@ -51,6 +57,11 @@ function renderAll() {
 
   // Drive chip
   renderDriveChip();
+
+  // Sync toggle visual
+  document.querySelectorAll('.poss-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.mode === State.possessionMode)
+  );
 
   // Auto-save
   GameManager.autosave();
@@ -113,9 +124,11 @@ function initEvents() {
   // Score inputs — sync to State on change
   document.getElementById('score-home').addEventListener('input', function () {
     State.scoreHome = parseInt(this.value, 10) || 0;
+    GameManager.autosave();
   });
   document.getElementById('score-away').addEventListener('input', function () {
     State.scoreAway = parseInt(this.value, 10) || 0;
+    GameManager.autosave();
   });
 
   const homeNameEl = document.getElementById('team-home-name');
@@ -125,9 +138,11 @@ function initEvents() {
 
   document.getElementById('team-home-name').addEventListener('input', function () {
     State.teamHome = this.value || 'HOME';
+    GameManager.autosave();
   });
   document.getElementById('team-away-name').addEventListener('input', function () {
     State.teamAway = this.value || 'AWAY';
+    GameManager.autosave();
   });
 
   // Quarter selector
@@ -158,6 +173,29 @@ function initEvents() {
     renderAll();
   });
 
+  // History filter — All / Own / Opp
+  document.querySelectorAll('.hist-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      State.historyFilter = btn.dataset.filter;
+      document.querySelectorAll('.hist-filter-btn').forEach(b =>
+        b.classList.toggle('active', b.dataset.filter === State.historyFilter)
+      );
+      renderHistory();
+    });
+  });
+
+  // Possession toggle — OWN / OPP
+  document.querySelectorAll('.poss-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.mode === State.possessionMode) return;
+      State.possessionMode = btn.dataset.mode;
+      State.selectedFormation = State.possessionMode === 'opp' ? 'opp-shotgun' : 'max';
+      State.selectedPlay = '';
+      State.selectedMotion = 'none';
+      renderAll();
+    });
+  });
+
 }
 
 // ── Boot ──────────────────────────────────
@@ -169,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCounters();
   initExport();
   MotionChip.init();
+  Opponent.init();
   initEvents();
   renderAll();
   renderHistory();
