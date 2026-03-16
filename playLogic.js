@@ -8,18 +8,17 @@ const PlayLogic = {
   commit() {
     // 1. Read penalty from DOM
     const penaltyActive = document.getElementById('btn-penalty-toggle')?.dataset.active === 'true';
-    const penaltyTeam   = document.getElementById('penalty-team')?.value || '';
     const penaltyYards  = parseInt(document.getElementById('penalty-yards')?.value, 10) || 0;
+    const penaltyFDA    = document.getElementById('pen-fda')?.checked || false;
+    const penaltyType   = State.penaltyType || 'off-penalty';
+    const noPlay        = penaltyActive && penaltyType === 'no-play';
     const notes         = document.getElementById('play-notes')?.value.trim() || '';
 
-    // 2. Capture player # from DOM (in case it wasn't synced on last keystroke)
-    State.playerNumber = parseInt(document.getElementById('val-player')?.value, 10) || 0;
-
     // 3. Save to history with all fields
-    logPlay({ penaltyActive, penaltyTeam, penaltyYards, notes });
+    logPlay({ penaltyActive, penaltyType, penaltyYards, penaltyFDA, noPlay, notes });
 
     // 4. Apply down & distance logic
-    this._applyResult(penaltyActive, penaltyTeam, penaltyYards);
+    this._applyResult(penaltyActive, penaltyType, penaltyYards, penaltyFDA);
 
     // 5. Move ball marker
     this._moveBall();
@@ -33,16 +32,28 @@ const PlayLogic = {
   },
 
   // ── Down & distance ────────────────────
-  _applyResult(penaltyActive, penaltyTeam, penaltyYards) {
+  _applyResult(penaltyActive, penaltyType, penaltyYards, penaltyFDA) {
     const result = State.selectedResult;
     const yards  = State.yardsGained;
 
-    // Apply penalty to toFirst BEFORE result logic
-    if (penaltyActive && penaltyYards > 0) {
-      if (penaltyTeam === 'OFF') {
-        State.toFirst = State.toFirst + penaltyYards;
-      } else {
-        State.toFirst = Math.max(1, State.toFirst - penaltyYards);
+    // Penalty takes full priority — play result is nullified
+    if (penaltyActive) {
+      if (penaltyType === 'no-play') {
+        return; // Repeat exact situation, nothing changes
+      }
+      if (penaltyType === 'off-penalty') {
+        State.toFirst += penaltyYards; // More yards to gain, repeat down
+        return;
+      }
+      if (penaltyType === 'def-penalty') {
+        const newToFirst = State.toFirst - penaltyYards;
+        if (penaltyFDA || newToFirst <= 0) {
+          State.down    = 1;
+          State.toFirst = 10;
+        } else {
+          State.toFirst = newToFirst; // Repeat down with fewer yards to go
+        }
+        return;
       }
     }
 
@@ -138,8 +149,9 @@ const PlayLogic = {
     State.playerNumber   = 0;
     State.selectedResult = '';
 
-    const playerEl = document.getElementById('val-player');
-    if (playerEl) playerEl.value = '';
+    document.getElementById('player-num-grid')
+      ?.querySelector('.pnum-btn.active')
+      ?.classList.remove('active');
 
     const notesEl = document.getElementById('play-notes');
     if (notesEl) notesEl.value = '';
@@ -152,6 +164,17 @@ const PlayLogic = {
 
     const penaltyYardsEl = document.getElementById('penalty-yards');
     if (penaltyYardsEl) penaltyYardsEl.value = '';
+
+    // Reset penalty type to OFF and clear FDA
+    State.penaltyType = 'off-penalty';
+    State.penaltyFDA  = false;
+    document.querySelectorAll('.pen-type-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+    const fdaChk = document.getElementById('pen-fda');
+    if (fdaChk) fdaChk.checked = false;
+    const fdaWrap = document.getElementById('pen-fda-wrap');
+    if (fdaWrap) fdaWrap.style.display = 'none';
+    const yardsRow = document.getElementById('penalty-yards-row');
+    if (yardsRow) yardsRow.style.display = 'flex';
 
     document.querySelectorAll('.result-btn').forEach(b => b.classList.remove('selected'));
 

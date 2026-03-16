@@ -12,7 +12,6 @@ const COUNTER_CONFIG = {
   tofirst: { stateKey: 'toFirst',      min: 1,   max: 99, elId: 'val-tofirst', format: v => v },
   down:    { stateKey: 'down',         min: 1,   max: 4,  elId: 'val-down',    format: formatDown },
   yards:   { stateKey: 'yardsGained',  min: -99, max: 99, elId: 'val-yards',   format: v => (v > 0 ? '+' : '') + v },
-  player:  { stateKey: 'playerNumber', min: 0,   max: 99, elId: 'val-player',  format: v => v === 0 ? '—' : v },
 };
 
 function formatDown(n) {

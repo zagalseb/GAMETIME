@@ -174,11 +174,17 @@
           ⚑ PENALTY
         </button>
         <div class="penalty-detail" id="penalty-detail" style="display:none">
-          <select class="penalty-select" id="penalty-team">
-            <option value="OFF">OFF</option>
-            <option value="DEF">DEF</option>
-          </select>
-          <input class="penalty-input" id="penalty-yards" type="number" min="0" max="50" placeholder="Yds" />
+          <div class="penalty-type-row">
+            <button class="pen-type-btn active" data-pentype="off-penalty">OFF ⚑</button>
+            <button class="pen-type-btn" data-pentype="def-penalty">DEF ⚑</button>
+            <button class="pen-type-btn" data-pentype="no-play">No Play</button>
+          </div>
+          <div class="penalty-yards-row" id="penalty-yards-row">
+            <input class="penalty-input" id="penalty-yards" type="number" min="0" max="50" placeholder="Yds" inputmode="numeric"/>
+            <label class="pen-fda-label" id="pen-fda-wrap" style="display:none">
+              <input type="checkbox" id="pen-fda"> Auto 1st
+            </label>
+          </div>
         </div>
       </div>
 
@@ -235,6 +241,10 @@
       <div class="strength-btns">
         <button class="strength-btn active" data-strength="L">L</button>
         <button class="strength-btn" data-strength="R">R</button>
+        <div class="hash-label">HASH</div>
+        <button class="hash-btn" data-hash="L">L</button>
+        <button class="hash-btn active" data-hash="M">M</button>
+        <button class="hash-btn" data-hash="R">R</button>
       </div>
     </div>
 
@@ -281,17 +291,8 @@
     <!-- Col 5: Player + Notes -->
     <div class="selector-col" id="col-player">
       <div class="col-header off-header">Player / Notes</div>
-      <div class="player-notes-panel">
-        <div class="field-group">
-          <label class="field-label">Player #</label>
-          <input class="player-num-input" id="val-player" type="number"
-                 min="0" max="99" placeholder="—" inputmode="numeric" />
-        </div>
-        <div class="field-group">
-          <label class="field-label">Notes</label>
-          <textarea class="notes-input" id="play-notes" maxlength="80" placeholder="Quick note..."></textarea>
-        </div>
-      </div>
+      <div class="player-num-grid" id="player-num-grid"></div>
+      <textarea class="notes-input" id="play-notes" maxlength="80" placeholder="Quick note..."></textarea>
     </div>
 
     <!-- Col 6: Front — def-first-col tiene el split border -->

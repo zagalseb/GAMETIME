@@ -354,6 +354,29 @@
   border-color: var(--accent-blue);
   color: var(--accent-blue-bright);
 }
+.hash-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.hash-btn {
+  width: 44px; height: 36px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 800;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.hash-btn.active {
+  background: var(--bg-selected);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue-bright);
+}
 
 /* ── Play History ── */
 .history-list {
@@ -877,18 +900,43 @@
 }
 .penalty-detail {
   display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.penalty-type-row {
+  display: flex;
+  gap: 4px;
+}
+.pen-type-btn {
+  flex: 1;
+  height: 26px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 99px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.pen-type-btn.active {
+  background: #e65c00;
+  border-color: #e65c00;
+  color: #fff;
+}
+.penalty-yards-row {
+  display: flex;
   gap: 6px;
   align-items: center;
 }
-.penalty-select {
-  flex: 1;
-  height: 30px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  border-radius: var(--r-sm);
-  color: var(--text-primary);
-  font-size: 12px;
-  padding: 0 6px;
+.pen-fda-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
 }
 .penalty-input {
   width: 52px;
@@ -946,6 +994,8 @@
   gap: 12px;
   padding: 10px;
   flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 .field-group {
   display: flex;
@@ -967,7 +1017,9 @@
   font-family: var(--font-ui);
   padding: 8px;
   resize: none;
-  height: 70px;
+  flex-shrink: 0;
+  height: 60px;
+  margin: 0 6px 6px;
   line-height: 1.4;
 }
 .notes-input::placeholder { color: var(--text-muted); }
@@ -976,25 +1028,36 @@
   border-color: var(--accent-blue);
 }
 
-/* ── Player number direct input ── */
-.player-num-input {
-  width: 72px;
-  height: 44px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  border-radius: var(--r-sm);
-  color: var(--text-primary);
-  font-size: 22px;
-  font-weight: 700;
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-  font-family: var(--font-ui);
-  -moz-appearance: textfield;
+/* ── Player number grid ── */
+.player-num-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3px;
+  padding: 6px;
+  align-content: start;
 }
-.player-num-input::placeholder { color: var(--text-muted); font-size: 16px; font-weight: 400; }
-.player-num-input:focus { outline: none; border-color: var(--accent-blue); }
-.player-num-input::-webkit-inner-spin-button,
-.player-num-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.pnum-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-ui);
+  padding: 0;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1;
+  transition: background 0.1s, color 0.1s;
+}
+.pnum-btn:active { background: var(--bg-item); }
+.pnum-btn.active {
+  background: var(--accent-blue);
+  color: #fff;
+  border-color: var(--accent-blue);
+}
 
 /* ── History result tags ── */
 .history-meta-tag.result-td         { color: var(--accent-orange); }

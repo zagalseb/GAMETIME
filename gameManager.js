@@ -42,6 +42,7 @@ const GameManager = (() => {
       flipped:           State.flipped,
       playType:          State.playType,
       strength:          State.strength,
+      hash:              State.hash,
       selectedFormation: State.selectedFormation,
       selectedPlay:      State.selectedPlay,
       selectedMotion:    State.selectedMotion,

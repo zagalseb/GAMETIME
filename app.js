@@ -37,6 +37,11 @@ function renderAll() {
     btn.classList.toggle('active', btn.dataset.strength === State.strength);
   });
 
+  // Hash
+  document.querySelectorAll('.hash-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.hash === State.hash);
+  });
+
   // Selectors
   renderFormationList();
   renderPlayList();
@@ -87,16 +92,47 @@ function initEvents() {
     });
   });
 
+  // Hash
+  document.querySelectorAll('.hash-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      State.hash = btn.dataset.hash;
+      renderAll();
+    });
+  });
+
   // Flip direction
   document.getElementById('btn-flip').addEventListener('click', () => {
     State.flipped = !State.flipped;
     updateBallMarker();
   });
 
-  // Player # — sync input to State on every keystroke
-  document.getElementById('val-player').addEventListener('input', function () {
-    State.playerNumber = parseInt(this.value, 10) || 0;
-  });
+  // Player # — number grid (0–99, 5 per row)
+  (function buildPlayerGrid() {
+    const grid = document.getElementById('player-num-grid');
+    if (!grid) return;
+    const nums = [
+      ...Array.from({length: 35}, (_, i) => i + 1),  // 1–35
+      ...Array.from({length: 10}, (_, i) => i + 80),  // 80–89
+    ];
+    let html = '';
+    nums.forEach(i => {
+      html += `<button class="pnum-btn" data-num="${i}">${i}</button>`;
+    });
+    grid.innerHTML = html;
+    grid.addEventListener('click', e => {
+      const btn = e.target.closest('.pnum-btn');
+      if (!btn) return;
+      const num = parseInt(btn.dataset.num, 10);
+      if (State.playerNumber === num) {
+        State.playerNumber = 0;
+        btn.classList.remove('active');
+      } else {
+        grid.querySelector('.pnum-btn.active')?.classList.remove('active');
+        State.playerNumber = num;
+        btn.classList.add('active');
+      }
+    });
+  })();
 
   // Next Play — delegate entirely to PlayLogic
   document.getElementById('btn-next-play').addEventListener('click', () => {
@@ -110,6 +146,19 @@ function initEvents() {
     const isActive = btn.dataset.active === 'true';
     btn.dataset.active = String(!isActive);
     detail.style.display = isActive ? 'none' : 'flex';
+  });
+
+  // Penalty type buttons
+  document.querySelectorAll('.pen-type-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.pen-type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      State.penaltyType = btn.dataset.pentype;
+      const isNoPlay = State.penaltyType === 'no-play';
+      const isDef    = State.penaltyType === 'def-penalty';
+      document.getElementById('penalty-yards-row').style.display = isNoPlay ? 'none' : 'flex';
+      document.getElementById('pen-fda-wrap').style.display       = isDef    ? 'flex' : 'none';
+    });
   });
 
   // Result selection

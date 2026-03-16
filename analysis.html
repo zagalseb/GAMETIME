@@ -781,8 +781,8 @@
     // play has a mode field (older saves).
     function ownPlays(history) {
       const hasModes = history.some(p => p.mode);
-      if (!hasModes) return history;
-      return history.filter(p => p.mode === 'own');
+      const base = hasModes ? history.filter(p => p.mode === 'own') : history;
+      return base.filter(p => !p.noPlay);
     }
 
     // Proper success rate: down-based yardage thresholds
@@ -798,7 +798,7 @@
       if (['incomplete', 'tfl', 'turnover', 'sack', 'punt'].includes(r)) return false;
 
       // Down-based thresholds
-      if (down === 1) return gained >= needed * 0.5;
+      if (down === 1) return gained >= needed * 0.4;
       if (down === 2) return gained >= needed * 0.6;
       return gained >= needed; // 3rd & 4th: must convert
     }

@@ -25,6 +25,9 @@ const State = {
   // Strength
   strength: 'L',   // 'L' | 'R'
 
+  // Hash
+  hash: 'M',       // 'L' | 'M' | 'R'
+
   // Selections
   selectedFormation: 'max',
   selectedPlay: '',
@@ -34,6 +37,8 @@ const State = {
   yardsGained: 0,
   playerNumber: 0,
   selectedResult: '',
+  penaltyType: 'off-penalty',  // 'off-penalty' | 'def-penalty' | 'no-play'
+  penaltyFDA:  false,
 
   // Play history
   history: [],

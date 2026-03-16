@@ -21,6 +21,7 @@ function logPlay(extra = {}) {
     motion:       State.selectedMotion,
     motionName:   motionObj?.name || '',
     strength:     State.strength,
+    hash:         State.hash,
     down:         State.down,
     toFirst:      State.toFirst,
     oppYardLine:  State.oppYardLine,
@@ -34,8 +35,9 @@ function logPlay(extra = {}) {
     yardsGained:  State.yardsGained,
     result:       State.selectedResult,
     playerNumber: State.playerNumber > 0 ? State.playerNumber : null,
+    noPlay:       extra.noPlay || false,
     penalty:      extra.penaltyActive
-                    ? { team: extra.penaltyTeam, yards: extra.penaltyYards }
+                    ? { type: extra.penaltyType, yards: extra.penaltyYards }
                     : null,
     notes:        extra.notes || '',
     // Possession mode
