@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Borregos</title>
+  <title>DataBlitz</title>
 
   <!-- Stylesheets (order matters) -->
   <link rel="stylesheet" href="reset.css" />
@@ -28,8 +28,8 @@
         </svg>
       </button>
       <div class="logo">
-        <div class="logo-icon">B</div>
-        <span class="logo-text">Borregos</span>
+        <div class="logo-icon">P</div>
+        <span class="logo-text">PLAYSYNC</span>
       </div>
       <nav class="main-nav">
         <a class="nav-link active" href="index.html">GAME</a>
@@ -74,6 +74,7 @@
       <div class="possession-toggle" id="possession-toggle">
         <button class="poss-btn active" data-mode="own">OWN</button>
         <button class="poss-btn" data-mode="opp">OPP</button>
+        <button class="poss-btn" data-mode="st">ST</button>
       </div>
       <button class="btn-secondary" id="btn-end-drive">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -169,24 +170,9 @@
         </div>
       </div>
 
-      <div class="penalty-row" id="penalty-row">
-        <button class="penalty-toggle" id="btn-penalty-toggle" data-active="false">
-          ⚑ PENALTY
-        </button>
-        <div class="penalty-detail" id="penalty-detail" style="display:none">
-          <div class="penalty-type-row">
-            <button class="pen-type-btn active" data-pentype="off-penalty">OFF ⚑</button>
-            <button class="pen-type-btn" data-pentype="def-penalty">DEF ⚑</button>
-            <button class="pen-type-btn" data-pentype="no-play">No Play</button>
-          </div>
-          <div class="penalty-yards-row" id="penalty-yards-row">
-            <input class="penalty-input" id="penalty-yards" type="number" min="0" max="50" placeholder="Yds" inputmode="numeric"/>
-            <label class="pen-fda-label" id="pen-fda-wrap" style="display:none">
-              <input type="checkbox" id="pen-fda"> Auto 1st
-            </label>
-          </div>
-        </div>
-      </div>
+      <button class="penalty-toggle-btn" id="btn-penalty-toggle" data-active="false">
+        ⚑ PENALTY
+      </button>
 
       <div class="run-pass-toggle">
         <button class="toggle-btn" id="btn-run" data-type="run">RUN</button>
@@ -327,7 +313,7 @@
             <path d="M6.5 1v7M4 6l2.5 2.5L9 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M1 10v1.5a.5.5 0 00.5.5h10a.5.5 0 00.5-.5V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
-          CSV
+          XLSX
         </button>
       </div>
       <div class="history-list" id="history-list">
@@ -358,6 +344,74 @@
   <script src="historyOverlay.js"></script>
   <script src="opponent.js"></script>
   <script src="app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<!-- PENALTY BOTTOM SHEET -->
+<div class="pen-backdrop" id="pen-backdrop"></div>
+<div class="pen-sheet" id="pen-sheet">
+
+  <div class="pen-sheet-handle"></div>
+
+  <div class="pen-sheet-header">
+    <span class="pen-sheet-title">⚑ Penalty</span>
+    <button class="pen-sheet-close" id="pen-sheet-close">✕</button>
+  </div>
+
+  <!-- Row 1: Team -->
+  <div class="pen-row">
+    <span class="pen-label">Team</span>
+    <div class="pen-btn-group">
+      <button class="pen-team-btn active" data-team="OFF">OFF</button>
+      <button class="pen-team-btn"        data-team="DEF">DEF</button>
+      <button class="pen-team-btn"        data-team="ST">ST</button>
+    </div>
+  </div>
+
+  <!-- Row 2: Foul + Player # -->
+  <div class="pen-row">
+    <input class="pen-text-input" id="pen-foul"
+           type="text" placeholder="Foul (ej. Holding)" maxlength="40"/>
+    <input class="pen-num-input" id="pen-player-num"
+           type="number" min="0" max="99" placeholder="#" inputmode="numeric"/>
+  </div>
+
+  <!-- Row 3: Yards + Net Yards + checkboxes -->
+  <div class="pen-row">
+    <div class="pen-field-group">
+      <span class="pen-label">Yards</span>
+      <input class="pen-num-input" id="pen-yards"
+             type="number" min="0" max="99" value="10" inputmode="numeric"/>
+    </div>
+    <div class="pen-field-group">
+      <span class="pen-label">Net Yds</span>
+      <input class="pen-num-input" id="pen-net-yards"
+             type="number" min="0" max="99" value="10" inputmode="numeric"/>
+    </div>
+    <label class="pen-check-label">
+      <input type="checkbox" id="pen-presnap"> Pre-snap
+    </label>
+    <label class="pen-check-label">
+      <input type="checkbox" id="pen-noplay"> No Play
+    </label>
+  </div>
+
+  <!-- Row 4: Decision -->
+  <div class="pen-row">
+    <span class="pen-label">Decision</span>
+    <div class="pen-btn-group">
+      <button class="pen-dec-btn active" data-decision="accepted">Accepted</button>
+      <button class="pen-dec-btn"        data-decision="declined">Declined</button>
+      <button class="pen-dec-btn"        data-decision="offsetting">Offsetting</button>
+    </div>
+  </div>
+
+  <!-- Footer: Confirm -->
+  <div class="pen-sheet-footer">
+    <button class="pen-confirm-btn" id="pen-confirm-btn">Confirm Penalty</button>
+    <button class="pen-clear-btn"   id="pen-clear-btn">Clear</button>
+  </div>
+
+</div>
 
 </body>
 </html>

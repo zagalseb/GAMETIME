@@ -8,17 +8,32 @@ const PlayLogic = {
   commit() {
     // 1. Read penalty from DOM
     const penaltyActive = document.getElementById('btn-penalty-toggle')?.dataset.active === 'true';
-    const penaltyYards  = parseInt(document.getElementById('penalty-yards')?.value, 10) || 0;
-    const penaltyFDA    = document.getElementById('pen-fda')?.checked || false;
-    const penaltyType   = State.penaltyType || 'off-penalty';
-    const noPlay        = penaltyActive && penaltyType === 'no-play';
-    const notes         = document.getElementById('play-notes')?.value.trim() || '';
+
+    let penaltyData = null;
+    if (penaltyActive) {
+      const decision = document.querySelector('.pen-dec-btn.active')?.dataset.decision || 'accepted';
+      const noPlayChk = document.getElementById('pen-noplay')?.checked || false;
+      const preSnap   = document.getElementById('pen-presnap')?.checked || false;
+      penaltyData = {
+        team:     document.querySelector('.pen-team-btn.active')?.dataset.team || 'OFF',
+        player:   parseInt(document.getElementById('pen-player-num')?.value) || null,
+        foul:     document.getElementById('pen-foul')?.value.trim() || '',
+        yards:    parseInt(document.getElementById('pen-yards')?.value) || 0,
+        netYards: parseInt(document.getElementById('pen-net-yards')?.value) || 0,
+        decision,
+        noPlay:   noPlayChk || preSnap,
+        preSnap,
+      };
+    }
+
+    const noPlay = penaltyData?.noPlay || false;
+    const notes  = document.getElementById('play-notes')?.value.trim() || '';
 
     // 3. Save to history with all fields
-    logPlay({ penaltyActive, penaltyType, penaltyYards, penaltyFDA, noPlay, notes });
+    logPlay({ penaltyData, noPlay, notes });
 
     // 4. Apply down & distance logic
-    this._applyResult(penaltyActive, penaltyType, penaltyYards, penaltyFDA);
+    this._applyResult(penaltyData);
 
     // 5. Move ball marker
     this._moveBall();
@@ -32,29 +47,33 @@ const PlayLogic = {
   },
 
   // ── Down & distance ────────────────────
-  _applyResult(penaltyActive, penaltyType, penaltyYards, penaltyFDA) {
+  _applyResult(penaltyData) {
     const result = State.selectedResult;
     const yards  = State.yardsGained;
 
     // Penalty takes full priority — play result is nullified
-    if (penaltyActive) {
-      if (penaltyType === 'no-play') {
-        return; // Repeat exact situation, nothing changes
-      }
-      if (penaltyType === 'off-penalty') {
-        State.toFirst += penaltyYards; // More yards to gain, repeat down
+    if (penaltyData && penaltyData.decision === 'accepted') {
+      if (penaltyData.noPlay) return; // Repeat same down/distance
+      const net = penaltyData.netYards;
+      if (penaltyData.team === 'OFF') {
+        State.toFirst += net;
+        // no change de down
         return;
       }
-      if (penaltyType === 'def-penalty') {
-        const newToFirst = State.toFirst - penaltyYards;
-        if (penaltyFDA || newToFirst <= 0) {
+      if (penaltyData.team === 'DEF') {
+        const newToFirst = State.toFirst - net;
+        if (newToFirst <= 0) {
           State.down    = 1;
           State.toFirst = 10;
         } else {
-          State.toFirst = newToFirst; // Repeat down with fewer yards to go
+          State.toFirst = newToFirst;
+          // repeat down — no incrementar
         }
         return;
       }
+    }
+    if (penaltyData && (penaltyData.decision === 'declined' || penaltyData.decision === 'offsetting')) {
+      // Play stands as-is — fall through to normal result logic
     }
 
     switch (result) {
@@ -156,33 +175,21 @@ const PlayLogic = {
     const notesEl = document.getElementById('play-notes');
     if (notesEl) notesEl.value = '';
 
-    const penaltyToggle = document.getElementById('btn-penalty-toggle');
-    if (penaltyToggle) penaltyToggle.dataset.active = 'false';
-
-    const penaltyDetail = document.getElementById('penalty-detail');
-    if (penaltyDetail) penaltyDetail.style.display = 'none';
-
-    const penaltyYardsEl = document.getElementById('penalty-yards');
-    if (penaltyYardsEl) penaltyYardsEl.value = '';
-
-    // Reset penalty type to OFF and clear FDA
-    State.penaltyType = 'off-penalty';
-    State.penaltyFDA  = false;
-    document.querySelectorAll('.pen-type-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
-    const fdaChk = document.getElementById('pen-fda');
-    if (fdaChk) fdaChk.checked = false;
-    const fdaWrap = document.getElementById('pen-fda-wrap');
-    if (fdaWrap) fdaWrap.style.display = 'none';
-    const yardsRow = document.getElementById('penalty-yards-row');
-    if (yardsRow) yardsRow.style.display = 'flex';
+    // Reset penalty
+    _clearPenaltySheet();
+    document.getElementById('btn-penalty-toggle').dataset.active = 'false';
+    document.getElementById('btn-penalty-toggle').classList.remove('pen-active');
 
     document.querySelectorAll('.result-btn').forEach(b => b.classList.remove('selected'));
 
     renderCounterValue('yards');
 
     // Reset defense selections
+    const defPb = State.possessionMode === 'st' ? getSTDefPlaybook()
+      : (State.possessionMode === 'opp' ? getOwnDefPlaybook() : getOppDefPlaybook());
+    const hasNone = defPb.blitzes.some(b => b.id === 'none');
     State.selectedFront    = '';
-    State.selectedBlitz    = 'none';
+    State.selectedBlitz    = hasNone ? 'none' : (defPb.blitzes[0]?.id || 'none');
     State.selectedCoverage = '';
     renderDefenseLists();
 

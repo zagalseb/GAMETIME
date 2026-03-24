@@ -37,8 +37,18 @@ const State = {
   yardsGained: 0,
   playerNumber: 0,
   selectedResult: '',
-  penaltyType: 'off-penalty',  // 'off-penalty' | 'def-penalty' | 'no-play'
-  penaltyFDA:  false,
+  penalty: null,
+  // penalty object shape cuando está activo:
+  // {
+  //   team:       'OFF' | 'DEF' | 'ST',
+  //   player:     number | null,
+  //   foul:       string,
+  //   yards:      number,
+  //   netYards:   number,
+  //   decision:   'accepted' | 'declined' | 'offsetting',
+  //   noPlay:     boolean,
+  //   preSnap:    boolean,
+  // }
 
   // Play history
   history: [],
@@ -54,7 +64,7 @@ const State = {
   drives:            [],
 
   // Possession mode
-  possessionMode: 'own',  // 'own' | 'opp'
+  possessionMode: 'own',  // 'own' | 'opp' | 'st'
   opponentPlays:  [],
 
   // History filter
@@ -62,9 +72,10 @@ const State = {
 
   // ── Derived ──────────────────────────────
   getSituationText() {
-    const downs = ['', '1st', '2nd', '3rd', '4th'];
+    const downs = ['—', '1st', '2nd', '3rd', '4th'];
     const yard = formatYardLine(this.oppYardLine);
     const side = yard > 0 ? 'OPP' : 'OWN';
+    if (this.down === 0) return `KO — ${side} ${Math.abs(yard)}`;
     return `${downs[this.down]} and ${this.toFirst} on ${side} ${Math.abs(yard)}`;
   },
 

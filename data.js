@@ -138,6 +138,7 @@ const PLAYBOOK = {
       { id: 'uc-pa-corner',     name: 'PA Corner',       type: 'pass' },
       { id: 'uc-slant',         name: 'Slant',           type: 'pass' },
     ],
+
   },
 
   motions: [
@@ -261,6 +262,71 @@ const OPP_DEFENSE_DATA = {
   coverages: DEFENSE_DATA.coverages.slice(),
 };
 
+const ST_PLAYBOOK = {
+  formations: [
+    { id: 'st-kicking',  name: 'Kicking',  group: 'K' },
+    { id: 'st-return',   name: 'Return',   group: 'R' },
+    { id: 'st-coverage', name: 'Coverage', group: 'C' },
+  ],
+  plays: {
+    'st-kicking': [
+      { id: 'st-kickoff',     name: 'Kickoff',        type: 'run' },
+      { id: 'st-kickoff-sky', name: 'Kickoff Sky',    type: 'run' },
+      { id: 'st-kickoff-sqb', name: 'Squib Kick',     type: 'run' },
+      { id: 'st-fg',          name: 'Field Goal',     type: 'run' },
+      { id: 'st-pat',         name: 'PAT',            type: 'run' },
+      { id: 'st-punt',        name: 'Punt',           type: 'run' },
+      { id: 'st-punt-away',   name: 'Punt Away',      type: 'run' },
+      { id: 'st-fake-punt',   name: 'Fake Punt',      type: 'run' },
+      { id: 'st-fake-fg',     name: 'Fake FG',        type: 'run' },
+    ],
+    'st-return': [
+      { id: 'st-ko-return',    name: 'KO Return',     type: 'run' },
+      { id: 'st-ko-ret-mid',   name: 'KO Return Mid', type: 'run' },
+      { id: 'st-ko-ret-right', name: 'KO Return R',   type: 'run' },
+      { id: 'st-ko-ret-left',  name: 'KO Return L',   type: 'run' },
+      { id: 'st-punt-return',  name: 'Punt Return',   type: 'run' },
+      { id: 'st-punt-ret-r',   name: 'Punt Return R', type: 'run' },
+      { id: 'st-punt-ret-l',   name: 'Punt Return L', type: 'run' },
+      { id: 'st-pr-reverse',   name: 'PR Reverse',    type: 'run' },
+    ],
+    'st-coverage': [
+      { id: 'st-ko-cover',     name: 'KO Coverage',   type: 'run' },
+      { id: 'st-punt-cover',   name: 'Punt Coverage', type: 'run' },
+      { id: 'st-fg-block',     name: 'FG Block',      type: 'run' },
+      { id: 'st-punt-block',   name: 'Punt Block',    type: 'run' },
+      { id: 'st-onside-def',   name: 'Onside Def',    type: 'run' },
+      { id: 'st-onside-off',   name: 'Onside Kick',   type: 'run' },
+    ],
+  },
+  motions: [
+    { id: 'none', name: 'No Motion' },
+  ],
+};
+
+const ST_DEFENSE_DATA = {
+  fronts: [
+    { id: 'st-fg-rush',     name: 'FG Rush'      },
+    { id: 'st-punt-rush',   name: 'Punt Rush'     },
+    { id: 'st-ko-def',      name: 'KO Defense'    },
+    { id: 'st-pr-def',      name: 'PR Defense'    },
+    { id: 'st-safe',        name: 'Safe'          },
+  ],
+  blitzes: [
+    { id: 'none',           name: 'No Rush'       },
+    { id: 'st-all-out',     name: 'All Out Rush'  },
+    { id: 'st-edge-rush',   name: 'Edge Rush'     },
+    { id: 'st-middle-rush', name: 'Middle Rush'   },
+  ],
+  coverages: [
+    { id: 'st-zone',        name: 'Zone'          },
+    { id: 'st-man',         name: 'Man'           },
+    { id: 'st-wedge',       name: 'Wedge'         },
+    { id: 'st-sky',         name: 'Sky'           },
+    { id: 'st-pooch',       name: 'Pooch'         },
+  ],
+};
+
 // Reads a playbook from localStorage, falls back to defaultData
 function getPlaybook(key, defaultData) {
   try {
@@ -273,12 +339,16 @@ function getOwnOffPlaybook() { return getPlaybook('playsync_playbook_own_off', P
 function getOwnDefPlaybook() { return getPlaybook('playsync_playbook_own_def', DEFENSE_DATA);    }
 function getOppOffPlaybook() { return getPlaybook('playsync_playbook_opp_off', OPPONENT_PLAYBOOK);}
 function getOppDefPlaybook() { return getPlaybook('playsync_playbook_opp_def', OPP_DEFENSE_DATA); }
+function getSTPlaybook()     { return getPlaybook('playsync_playbook_st',      ST_PLAYBOOK);      }
+function getSTDefPlaybook()  { return getPlaybook('playsync_playbook_st_def',  ST_DEFENSE_DATA);  }
 
 // Returns the active offensive playbook based on possession mode
 function getActivePlaybook() {
-  return (typeof State !== 'undefined' && State.possessionMode === 'opp')
-    ? getOppOffPlaybook()
-    : getOwnOffPlaybook();
+  if (typeof State !== 'undefined') {
+    if (State.possessionMode === 'opp') return getOppOffPlaybook();
+    if (State.possessionMode === 'st')  return getSTPlaybook();
+  }
+  return getOwnOffPlaybook();
 }
 
 // Helper: get plays for a formation (fallback to first formation)

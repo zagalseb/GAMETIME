@@ -9,14 +9,14 @@ function logPlay(extra = {}) {
   const playObj = plays.find(p => p.id === State.selectedPlay);
   const motionObj = getActivePlaybook().motions.find(m => m.id === State.selectedMotion);
 
-  if (!playObj) return;
+  if (!playObj && State.possessionMode !== 'st') return;
 
   const entry = {
     timestamp:    new Date().toISOString(),
     formation:    State.selectedFormation,
     formationName:State.getSelectedFormationName(),
     play:         State.selectedPlay,
-    playName:     State.getSelectedPlayName(),
+    playName:     playObj?.name || (State.possessionMode === 'st' ? State.getSelectedFormationName() : ''),
     type:         State.playType,
     motion:       State.selectedMotion,
     motionName:   motionObj?.name || '',
@@ -35,10 +35,8 @@ function logPlay(extra = {}) {
     yardsGained:  State.yardsGained,
     result:       State.selectedResult,
     playerNumber: State.playerNumber > 0 ? State.playerNumber : null,
-    noPlay:       extra.noPlay || false,
-    penalty:      extra.penaltyActive
-                    ? { type: extra.penaltyType, yards: extra.penaltyYards }
-                    : null,
+    noPlay:  extra.noPlay || false,
+    penalty: extra.penaltyData || null,
     notes:        extra.notes || '',
     // Possession mode
     mode:             State.possessionMode,

@@ -139,26 +139,53 @@ function initEvents() {
     PlayLogic.commit();
   });
 
-  // Penalty toggle
-  document.getElementById('btn-penalty-toggle').addEventListener('click', () => {
-    const btn = document.getElementById('btn-penalty-toggle');
-    const detail = document.getElementById('penalty-detail');
-    const isActive = btn.dataset.active === 'true';
-    btn.dataset.active = String(!isActive);
-    detail.style.display = isActive ? 'none' : 'flex';
+  // ── Penalty sheet ─────────────────────────
+  document.getElementById('btn-penalty-toggle').addEventListener('click', openPenaltySheet);
+  document.getElementById('pen-sheet-close').addEventListener('click', closePenaltySheet);
+  document.getElementById('pen-backdrop').addEventListener('click', closePenaltySheet);
+
+  // Team buttons
+  document.querySelectorAll('.pen-team-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.pen-team-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
   });
 
-  // Penalty type buttons
-  document.querySelectorAll('.pen-type-btn').forEach(btn => {
+  // Decision buttons
+  document.querySelectorAll('.pen-dec-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.pen-type-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.pen-dec-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      State.penaltyType = btn.dataset.pentype;
-      const isNoPlay = State.penaltyType === 'no-play';
-      const isDef    = State.penaltyType === 'def-penalty';
-      document.getElementById('penalty-yards-row').style.display = isNoPlay ? 'none' : 'flex';
-      document.getElementById('pen-fda-wrap').style.display       = isDef    ? 'flex' : 'none';
     });
+  });
+
+  // Pre-snap → auto-check No Play
+  document.getElementById('pen-presnap').addEventListener('change', function() {
+    if (this.checked) document.getElementById('pen-noplay').checked = true;
+  });
+
+  // Yards → auto-sync Net Yards
+  document.getElementById('pen-yards').addEventListener('input', function() {
+    const netEl = document.getElementById('pen-net-yards');
+    if (netEl.dataset.manual !== 'true') netEl.value = this.value;
+  });
+  document.getElementById('pen-net-yards').addEventListener('input', function() {
+    this.dataset.manual = 'true';
+  });
+
+  // Confirm — marca el penalty como activo y cierra el sheet
+  document.getElementById('pen-confirm-btn').addEventListener('click', () => {
+    document.getElementById('btn-penalty-toggle').dataset.active = 'true';
+    document.getElementById('btn-penalty-toggle').classList.add('pen-active');
+    closePenaltySheet();
+  });
+
+  // Clear — limpia y desactiva
+  document.getElementById('pen-clear-btn').addEventListener('click', () => {
+    _clearPenaltySheet();
+    document.getElementById('btn-penalty-toggle').dataset.active = 'false';
+    document.getElementById('btn-penalty-toggle').classList.remove('pen-active');
   });
 
   // Result selection
@@ -211,7 +238,8 @@ function initEvents() {
 
   // Playbook Editor button
   document.getElementById('btn-playbook-editor').addEventListener('click', () => {
-    PlaybookEditor.open();
+    GameManager.autosave();
+    window.location.href = 'playbook.html';
   });
 
   // End Drive
@@ -233,18 +261,51 @@ function initEvents() {
     });
   });
 
-  // Possession toggle — OWN / OPP
+  // Possession toggle — OWN / OPP / ST
   document.querySelectorAll('.poss-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       if (btn.dataset.mode === State.possessionMode) return;
       State.possessionMode = btn.dataset.mode;
-      State.selectedFormation = State.possessionMode === 'opp' ? 'opp-shotgun' : 'max';
-      State.selectedPlay = '';
+      if (btn.dataset.mode === 'st') {
+        State.selectedFormation = 'st-kicking';
+        const stPlays = getPlaysForFormation('st-kicking');
+        State.selectedPlay = stPlays[0]?.id || '';
+        State.playType = 'run';
+      } else if (btn.dataset.mode === 'opp') {
+        State.selectedFormation = 'opp-shotgun';
+        const oppPlays = getPlaysForFormation('opp-shotgun');
+        State.selectedPlay = oppPlays[0]?.id || '';
+      } else {
+        State.selectedFormation = 'max';
+        const ownPlays = getPlaysForFormation('max');
+        State.selectedPlay = ownPlays[0]?.id || '';
+      }
       State.selectedMotion = 'none';
       renderAll();
     });
   });
 
+}
+
+// ── Penalty sheet helpers ─────────────────
+function openPenaltySheet() {
+  document.getElementById('pen-backdrop').classList.add('open');
+  document.getElementById('pen-sheet').classList.add('open');
+}
+function closePenaltySheet() {
+  document.getElementById('pen-backdrop').classList.remove('open');
+  document.getElementById('pen-sheet').classList.remove('open');
+}
+function _clearPenaltySheet() {
+  document.getElementById('pen-foul').value       = '';
+  document.getElementById('pen-player-num').value = '';
+  document.getElementById('pen-yards').value      = '10';
+  document.getElementById('pen-net-yards').value  = '10';
+  document.getElementById('pen-net-yards').dataset.manual = 'false';
+  document.getElementById('pen-presnap').checked  = false;
+  document.getElementById('pen-noplay').checked   = false;
+  document.querySelectorAll('.pen-team-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+  document.querySelectorAll('.pen-dec-btn').forEach((b,i) => b.classList.toggle('active', i===0));
 }
 
 // ── Boot ──────────────────────────────────

@@ -4,10 +4,13 @@
 // ══════════════════════════════════════════
 
 function renderDefenseLists() {
+  // ST mode: use ST defense data
   // OWN mode (you offense): opponent is on defense → OPP DEF
   // OPP mode (opponent offense): you are on defense → OWN DEF
-  const isOpp = typeof State !== 'undefined' && State.possessionMode === 'opp';
-  const d = isOpp ? getOwnDefPlaybook() : getOppDefPlaybook();
+  const mode = typeof State !== 'undefined' ? State.possessionMode : 'own';
+  const d = mode === 'st'  ? getSTDefPlaybook()
+          : mode === 'opp' ? getOwnDefPlaybook()
+          :                  getOppDefPlaybook();
   _renderList('front-list',    d.fronts,    State.selectedFront,    id => { State.selectedFront    = id; renderDefenseLists(); });
   _renderList('blitz-list',    d.blitzes,   State.selectedBlitz,    id => { State.selectedBlitz    = id; renderDefenseLists(); });
   _renderList('coverage-list', d.coverages, State.selectedCoverage, id => { State.selectedCoverage = id; renderDefenseLists(); });

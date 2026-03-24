@@ -9,14 +9,14 @@ function formatYardLine(v) {
 
 const COUNTER_CONFIG = {
   opp:     { stateKey: 'oppYardLine',  min: 1,   max: 99, elId: 'val-opp',     format: formatYardLine },
-  tofirst: { stateKey: 'toFirst',      min: 1,   max: 99, elId: 'val-tofirst', format: v => v },
-  down:    { stateKey: 'down',         min: 1,   max: 4,  elId: 'val-down',    format: formatDown },
+  tofirst: { stateKey: 'toFirst',      min: 0,   max: 99, elId: 'val-tofirst', format: v => v },
+  down:    { stateKey: 'down',         min: 0,   max: 4,  elId: 'val-down',    format: formatDown },
   yards:   { stateKey: 'yardsGained',  min: -99, max: 99, elId: 'val-yards',   format: v => (v > 0 ? '+' : '') + v },
 };
 
 function formatDown(n) {
-  const labels = ['', '1<sup>st</sup>', '2<sup>nd</sup>', '3<sup>rd</sup>', '4<sup>th</sup>'];
-  return labels[n] || n;
+  const labels = ['—', '1<sup>st</sup>', '2<sup>nd</sup>', '3<sup>rd</sup>', '4<sup>th</sup>'];
+  return labels[n] ?? n;
 }
 
 function initCounters() {

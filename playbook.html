@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Playbook — Borregos</title>
+  <title>Playbook — DataBlitz</title>
   <script src="data.js"></script>
   <style>
     /* ── Tokens (from tokens.css) ── */
@@ -108,6 +108,8 @@
     .pb-tab[data-tab="own-def"].active { color: #00c896; border-bottom-color: #00c896; }
     .pb-tab[data-tab="opp-off"].active,
     .pb-tab[data-tab="opp-def"].active { color: #e85d30; border-bottom-color: #e85d30; }
+    .pb-tab[data-tab="st"].active,
+    .pb-tab[data-tab="st-def"].active  { color: #f5a623; border-bottom-color: #f5a623; }
 
     /* ── Main panel ── */
     #main-panel {
@@ -313,6 +315,8 @@
     <button class="pb-tab" data-tab="own-def">OWN DEF</button>
     <button class="pb-tab" data-tab="opp-off">OPP OFF</button>
     <button class="pb-tab" data-tab="opp-def">OPP DEF</button>
+    <button class="pb-tab" data-tab="st">ST</button>
+    <button class="pb-tab" data-tab="st-def">ST DEF</button>
   </div>
 
   <!-- Main panel — populated by JS -->
@@ -356,6 +360,8 @@
     'own-def': 'playsync_playbook_own_def',
     'opp-off': 'playsync_playbook_opp_off',
     'opp-def': 'playsync_playbook_opp_def',
+    'st':      'playsync_playbook_st',
+    'st-def':  'playsync_playbook_st_def',
   };
 
   function defaultsFor(tab) {
@@ -364,6 +370,8 @@
       case 'own-def': return DEFENSE_DATA;
       case 'opp-off': return OPPONENT_PLAYBOOK;
       case 'opp-def': return OPP_DEFENSE_DATA;
+      case 'st':      return ST_PLAYBOOK;
+      case 'st-def':  return ST_DEFENSE_DATA;
     }
   }
 
@@ -371,12 +379,12 @@
 
   const S = {
     activeTab: 'own-off',
-    selForm:   { 'own-off': null, 'opp-off': null },
+    selForm:   { 'own-off': null, 'opp-off': null, 'st': null },
     pb:        {},
   };
 
   function loadAll() {
-    ['own-off', 'own-def', 'opp-off', 'opp-def'].forEach(tab => {
+    ['own-off', 'own-def', 'opp-off', 'opp-def', 'st', 'st-def'].forEach(tab => {
       try {
         const raw = localStorage.getItem(KEYS[tab]);
         S.pb[tab] = raw ? JSON.parse(raw) : clone(defaultsFor(tab));
@@ -384,7 +392,7 @@
         S.pb[tab] = clone(defaultsFor(tab));
       }
     });
-    ['own-off', 'opp-off'].forEach(tab => {
+    ['own-off', 'opp-off', 'st'].forEach(tab => {
       const fmts = S.pb[tab]?.formations;
       S.selForm[tab] = fmts?.length ? fmts[0].id : null;
     });
@@ -399,11 +407,13 @@
     const labels = {
       'own-off': 'OWN OFFENSE', 'own-def': 'OWN DEFENSE',
       'opp-off': 'OPP OFFENSE', 'opp-def': 'OPP DEFENSE',
+      'st':     'SPECIAL TEAMS',
+      'st-def': 'ST DEFENSE',
     };
     if (!confirm(`Reset ${labels[tab]} to factory defaults?\nAll custom changes will be lost.`)) return;
     localStorage.removeItem(KEYS[tab]);
     S.pb[tab] = clone(defaultsFor(tab));
-    if (tab === 'own-off' || tab === 'opp-off') {
+    if (tab === 'own-off' || tab === 'opp-off' || tab === 'st') {
       const fmts = S.pb[tab]?.formations;
       S.selForm[tab] = fmts?.length ? fmts[0].id : null;
     }
@@ -418,7 +428,7 @@
       btn.classList.toggle('active', btn.dataset.tab === S.activeTab)
     );
     const tab = S.activeTab;
-    if (tab === 'own-off' || tab === 'opp-off') renderOffPanel(tab);
+    if (tab === 'own-off' || tab === 'opp-off' || tab === 'st') renderOffPanel(tab);
     else renderDefPanel(tab);
   }
 
