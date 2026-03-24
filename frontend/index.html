@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>PlaySync</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0d0d0f;
+      --bg-panel:   #141416;
+      --bg-card:    #1c1c1f;
+      --bg-item:    #242428;
+      --border:     rgba(255,255,255,.08);
+      --text:       #f0f0f2;
+      --text-sec:   #a0a0a8;
+      --text-muted: #606068;
+      --accent:     #00C896;
+      --r-sm:       6px;
+      --r-md:       10px;
+      --r-lg:       16px;
+      --font:       -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+    }
+
+    html, body {
+      height: 100%; background: var(--bg);
+      color: var(--text); font-family: var(--font);
+    }
+
+    button { cursor: pointer; border: none; background: none;
+             font-family: var(--font); color: var(--text); }
+
+    /* ── Layout ── */
+    .hub-root {
+      min-height: 100dvh;
+      display: flex; flex-direction: column;
+    }
+
+    /* ── Header ── */
+    .hub-header {
+      display: flex; align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-panel);
+      flex-shrink: 0;
+    }
+    .hub-logo {
+      display: flex; align-items: center; gap: 10px; flex: 1;
+    }
+    .hub-logo-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 900;
+      color: #000; flex-shrink: 0;
+      overflow: hidden;
+    }
+    .hub-logo-icon img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .hub-logo-info { display: flex; flex-direction: column; gap: 1px; }
+    .hub-logo-name {
+      font-size: 15px; font-weight: 800; line-height: 1.1;
+    }
+    .hub-logo-code {
+      font-size: 10px; font-weight: 700;
+      color: var(--text-muted); letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .hub-logout-btn {
+      height: 34px; padding: 0 14px;
+      background: var(--bg-item);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      font-size: 12px; font-weight: 700;
+      color: var(--text-muted);
+      transition: all .15s;
+    }
+    .hub-logout-btn:active { color: var(--text); }
+
+    /* ── Content ── */
+    .hub-content {
+      flex: 1; display: flex; flex-direction: column;
+      padding: 32px 20px;
+      max-width: 480px; margin: 0 auto; width: 100%;
+    }
+
+    .hub-welcome {
+      margin-bottom: 32px;
+    }
+    .hub-welcome-title {
+      font-size: 28px; font-weight: 900;
+      letter-spacing: -.5px; line-height: 1.15;
+      margin-bottom: 6px;
+    }
+    .hub-welcome-sub {
+      font-size: 14px; color: var(--text-sec);
+      line-height: 1.5;
+    }
+
+    /* ── App cards ── */
+    .hub-apps {
+      display: flex; flex-direction: column; gap: 14px;
+    }
+
+    .hub-app-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 20px;
+      display: flex; align-items: center; gap: 16px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      text-decoration: none; color: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hub-app-card:active {
+      background: var(--bg-item);
+    }
+    .hub-app-card.available:hover {
+      border-color: var(--accent);
+    }
+    .hub-app-card.coming-soon {
+      opacity: .5; cursor: default;
+    }
+
+    .hub-app-icon {
+      width: 56px; height: 56px;
+      border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; flex-shrink: 0;
+    }
+    .hub-app-icon.gametime {
+      background: rgba(0,200,150,.12);
+      border: 1px solid rgba(0,200,150,.2);
+    }
+    .hub-app-icon.pp {
+      background: rgba(30,136,229,.12);
+      border: 1px solid rgba(30,136,229,.2);
+    }
+
+    .hub-app-info { flex: 1; min-width: 0; }
+    .hub-app-name {
+      font-size: 17px; font-weight: 800;
+      margin-bottom: 3px;
+    }
+    .hub-app-desc {
+      font-size: 13px; color: var(--text-sec);
+      line-height: 1.4;
+    }
+
+    .hub-app-arrow {
+      font-size: 20px; color: var(--text-muted);
+      flex-shrink: 0; transition: transform .2s;
+    }
+    .hub-app-card.available:hover .hub-app-arrow {
+      transform: translateX(3px);
+    }
+
+    .hub-app-badge {
+      font-size: 9px; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      padding: 2px 7px; border-radius: 3px;
+      background: var(--bg-item);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    /* ── Footer ── */
+    .hub-footer {
+      padding: 20px 20px 32px;
+      text-align: center;
+      font-size: 11px; color: var(--text-muted);
+      max-width: 480px; margin: 0 auto; width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<div class="hub-root">
+
+  <!-- Header -->
+  <header class="hub-header">
+    <div class="hub-logo">
+      <div class="hub-logo-icon" id="hub-logo-icon">PS</div>
+      <div class="hub-logo-info">
+        <div class="hub-logo-name" id="hub-logo-name">PlaySync</div>
+        <div class="hub-logo-code" id="hub-logo-code"></div>
+      </div>
+    </div>
+    <button class="hub-logout-btn" id="btn-logout">Cerrar sesión</button>
+  </header>
+
+  <!-- Content -->
+  <div class="hub-content">
+
+    <div class="hub-welcome">
+      <div class="hub-welcome-title" id="hub-welcome-title">
+        Bienvenido
+      </div>
+      <div class="hub-welcome-sub">
+        Selecciona la herramienta con la que quieres trabajar.
+      </div>
+    </div>
+
+    <div class="hub-apps">
+
+      <!-- GAMETIME -->
+      <a class="hub-app-card available" href="game.html" id="card-gametime">
+        <div class="hub-app-icon gametime">🏈</div>
+        <div class="hub-app-info">
+          <div class="hub-app-name">GAMETIME</div>
+          <div class="hub-app-desc">
+            Captura de jugadas en vivo, análisis y export para HUDL.
+          </div>
+        </div>
+        <div class="hub-app-arrow">→</div>
+      </a>
+
+      <!-- PLAYER PARTICIPATION -->
+      <div class="hub-app-card coming-soon">
+        <div class="hub-app-icon pp">📋</div>
+        <div class="hub-app-info">
+          <div class="hub-app-name">PLAYER PARTICIPATION</div>
+          <div class="hub-app-desc">
+            Snaps, grading y análisis de participación por jugador.
+          </div>
+        </div>
+        <span class="hub-app-badge">Próximamente</span>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="hub-footer">
+    PlaySync · Football Analytics
+  </div>
+
+</div>
+
+<script src="js/teamConfig.js"></script>
+<script>
+'use strict';
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Guard — si no hay equipo activo, ir al login
+  if (!TeamConfig.requireTeam()) return;
+
+  const cfg  = TeamConfig.get();
+  const code = TeamConfig.getActiveTeam();
+
+  // ── Aplicar identidad del equipo ──────
+  document.documentElement.style.setProperty('--accent', cfg.color);
+
+  // Logo icon
+  const logoIcon = document.getElementById('hub-logo-icon');
+  if (cfg.logo) {
+    logoIcon.innerHTML = `<img src="${cfg.logo}" alt="${cfg.name}">`;
+  } else {
+    logoIcon.textContent      = cfg.initials || cfg.name.slice(0,2).toUpperCase();
+    logoIcon.style.background = cfg.color;
+    logoIcon.style.color      = _contrastColor(cfg.color);
+  }
+
+  // Nombre y código
+  document.getElementById('hub-logo-name').textContent = cfg.name || 'PlaySync';
+  document.getElementById('hub-logo-code').textContent = code || '';
+
+  // Bienvenida personalizada
+  if (cfg.name && cfg.name !== 'Mi Equipo') {
+    document.getElementById('hub-welcome-title').textContent =
+      `Hola, ${cfg.name} 👋`;
+  }
+
+  // Hover dinámico en card de GAMETIME
+  const card = document.getElementById('card-gametime');
+  card.addEventListener('mouseenter', () => {
+    card.style.borderColor = cfg.color;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.borderColor = '';
+  });
+
+  // ── Logout ────────────────────────────
+  document.getElementById('btn-logout').addEventListener('click', () => {
+    if (confirm('¿Cerrar sesión?')) {
+      TeamConfig.logout(); // redirige a login.html
+    }
+  });
+});
+
+function _contrastColor(hex) {
+  const h = (hex || '').replace('#','');
+  if (h.length < 6) return '#fff';
+  const r = parseInt(h.slice(0,2),16);
+  const g = parseInt(h.slice(2,4),16);
+  const b = parseInt(h.slice(4,6),16);
+  return (0.299*r + 0.587*g + 0.114*b)/255 > 0.55 ? '#000' : '#fff';
+}
+</script>
+</body>
+</html>
